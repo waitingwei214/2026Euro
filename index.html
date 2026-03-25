@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>旅遊行程 App</title>
+<meta name="theme-color" content="#667eea">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="歐洲之旅">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #2d3748; max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+
+  .app-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 16px 20px 0; color: white;
+    box-shadow: 0 2px 12px rgba(102,126,234,0.4);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .app-title { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+
+  .top-tabs { display: flex; gap: 4px; }
+  .top-tab {
+    flex: 1; padding: 10px 0; text-align: center; font-size: 14px; font-weight: 600;
+    border-radius: 10px 10px 0 0; cursor: pointer; transition: all 0.2s;
+    color: rgba(255,255,255,0.7);
+  }
+  .top-tab.active { background: #f0f4f8; color: #667eea; }
+  .top-tab:not(.active):hover { background: rgba(255,255,255,0.15); color: white; }
+
+  .main-content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* DAY SECTION */
+  .day-section { margin: 14px 12px 0; }
+
+  .day-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white; border-radius: 12px; padding: 12px 16px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer; user-select: none; transition: border-radius 0.25s;
+  }
+  .day-header.open { border-radius: 12px 12px 0 0; }
+  .day-badge { background: rgba(255,255,255,0.25); border-radius: 8px; padding: 2px 10px; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .day-title { font-size: 15px; font-weight: 600; flex: 1; }
+  .day-date { font-size: 12px; opacity: 0.85; flex-shrink: 0; }
+  .day-chevron { font-size: 13px; opacity: 0.8; transition: transform 0.3s; flex-shrink: 0; }
+  .day-header.open .day-chevron { transform: rotate(180deg); }
+
+  .day-body {
+    background: white; border-radius: 0 0 12px 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    overflow: hidden;
+    max-height: 0; padding: 0 12px;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+  }
+  .day-body.open { max-height: 2000px; padding: 4px 12px 10px; }
+
+  /* EVENT ITEMS */
+  .event-item {
+    display: flex; gap: 10px; padding: 9px 6px;
+    border-bottom: 1px solid #f0f4f8; align-items: flex-start;
+    border-radius: 8px; transition: background 0.15s;
+  }
+  .event-item:last-child { border-bottom: none; }
+  .event-item.clickable { cursor: pointer; }
+  .event-item.clickable:hover { background: #f7f9ff; }
+  .event-item.clickable:active { background: #eef1ff; }
+  .event-item.clickable:hover .event-name { color: #667eea; }
+
+  .event-icon { font-size: 18px; width: 28px; text-align: center; flex-shrink: 0; margin-top: 2px; }
+  .event-content { flex: 1; min-width: 0; }
+  .event-time { font-size: 11px; color: #a0aec0; font-weight: 600; margin-bottom: 2px; }
+  .event-name { font-size: 14px; font-weight: 600; color: #2d3748; line-height: 1.4; transition: color 0.15s; }
+  .event-desc { font-size: 12px; color: #718096; margin-top: 2px; line-height: 1.5; }
+  .event-arrow { font-size: 16px; color: #cbd5e0; flex-shrink: 0; align-self: center; padding-left: 2px; transition: color 0.15s; }
+  .event-item.clickable:hover .event-arrow { color: #667eea; }
+
+  .transport-item { background: linear-gradient(135deg, #f7fafc, #edf2f7); border-radius: 10px; padding: 9px 10px; margin: 4px 0; }
+  .transport-item .event-name { color: #4a5568; }
+  .flight-badge { background: #667eea; color: white; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; }
+
+  /* SPOTS */
+  .spots-header { padding: 14px 12px 6px; }
+  .spots-header h3 { font-size: 14px; color: #718096; font-weight: 600; }
+
+  .spot-card {
+    background: white; margin: 0 12px 14px; border-radius: 16px;
+    overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    scroll-margin-top: 16px;
+  }
+
+  .spot-photos { display: flex; gap: 2px; height: 140px; background: #e2e8f0; overflow: hidden; }
+  .spot-photo { flex: 1; object-fit: cover; display: block; min-width: 0; }
+  .spot-photo-error { display: none; }
+
+  .spot-card-header { padding: 12px 14px 8px; display: flex; align-items: center; gap: 10px; }
+  .spot-emoji { font-size: 24px; }
+  .spot-info { flex: 1; }
+  .spot-name { font-size: 15px; font-weight: 700; color: #2d3748; }
+  .spot-location { font-size: 11px; color: #a0aec0; margin-top: 2px; }
+  .spot-day-badge { background: #667eea15; color: #667eea; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+
+  .spot-divider { height: 1px; background: #f0f4f8; margin: 0 14px; }
+  .spot-body { padding: 10px 14px 14px; }
+  .spot-desc { font-size: 13px; color: #4a5568; line-height: 1.75; }
+  .spot-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+  .spot-tag { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 3px 9px; font-size: 11px; color: #718096; }
+  .spot-tip { background: #fffbeb; border-left: 3px solid #f6ad55; border-radius: 0 8px 8px 0; padding: 8px 12px; margin-top: 10px; font-size: 12px; color: #744210; line-height: 1.6; }
+
+  .spot-card.highlight { animation: glow 1.4s ease; }
+  @keyframes glow { 0%,100%{box-shadow:0 2px 12px rgba(0,0,0,0.08)} 35%{box-shadow:0 0 0 3px #667eea80,0 4px 24px rgba(102,126,234,.35)} }
+
+  /* EXPENSES */
+  .expense-container { padding: 12px; }
+  .expense-summary { background: linear-gradient(135deg,#667eea,#764ba2); border-radius: 16px; padding: 18px; color: white; margin-bottom: 14px; box-shadow: 0 4px 15px rgba(102,126,234,.3); }
+  .expense-total-label { font-size: 13px; opacity: .85; margin-bottom: 4px; }
+  .expense-total-amount { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+  .expense-currency { font-size: 13px; opacity: .8; margin-top: 4px; }
+  .expense-by-cat { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+  .cat-chip { background: rgba(255,255,255,.2); border-radius: 8px; padding: 4px 10px; font-size: 11px; }
+  .expense-add-section { background: white; border-radius: 14px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+  .section-title { font-size: 14px; font-weight: 700; color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .form-row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .form-group { flex: 1; }
+  .form-group label { font-size: 10px; color: #a0aec0; font-weight: 700; margin-bottom: 4px; display: block; text-transform: uppercase; letter-spacing: .5px; }
+  .form-group input,.form-group select { width: 100%; padding: 9px 10px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 13px; color: #2d3748; background: #f7fafc; transition: border .2s; -webkit-appearance: none; }
+  .form-group input:focus,.form-group select:focus { outline: none; border-color: #667eea; background: white; }
+  .btn-add { width: 100%; padding: 11px; background: linear-gradient(135deg,#667eea,#764ba2); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 4px; }
+  .expense-list { background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+  .expense-list-header { padding: 12px 14px 8px; border-bottom: 1px solid #f0f4f8; }
+  .expense-item { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid #f7fafc; }
+  .expense-item:last-child { border-bottom: none; }
+  .expense-item-icon { font-size: 18px; width: 34px; height: 34px; background: #f7fafc; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .expense-item-info { flex: 1; }
+  .expense-item-name { font-size: 14px; font-weight: 600; color: #2d3748; }
+  .expense-item-meta { font-size: 11px; color: #a0aec0; margin-top: 2px; }
+  .expense-item-amount { font-size: 14px; font-weight: 700; color: #e53e3e; white-space: nowrap; }
+  .expense-item-del { background: none; border: none; color: #e2e8f0; font-size: 18px; cursor: pointer; padding: 4px; border-radius: 6px; transition: color .2s; }
+  .expense-item-del:hover { color: #e53e3e; }
+  .empty-state { text-align: center; padding: 32px 16px; color: #a0aec0; }
+  .empty-state .empty-icon { font-size: 40px; margin-bottom: 8px; }
+  .empty-state p { font-size: 13px; }
+
+  /* NOTES */
+  .notes-container { padding: 12px; }
+  .note-add-section { background: white; border-radius: 14px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+  .note-title-input,.note-textarea { width: 100%; padding: 9px 12px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 13px; color: #2d3748; background: #f7fafc; font-family: inherit; transition: border .2s; }
+  .note-title-input { margin-bottom: 8px; font-size: 14px; }
+  .note-textarea { resize: none; min-height: 90px; line-height: 1.6; }
+  .note-title-input:focus,.note-textarea:focus { outline: none; border-color: #667eea; background: white; }
+  .note-actions { display: flex; gap: 8px; margin-top: 8px; }
+  .btn-note { flex: 1; padding: 10px; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .btn-note-add { background: linear-gradient(135deg,#667eea,#764ba2); color: white; }
+  .btn-note-clear { background: #f0f4f8; color: #718096; }
+  .notes-list { display: flex; flex-direction: column; gap: 10px; }
+  .note-card { background: white; border-radius: 14px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(0,0,0,.06); position: relative; }
+  .note-card-title { font-size: 14px; font-weight: 700; color: #2d3748; margin-bottom: 6px; padding-right: 28px; }
+  .note-card-body { font-size: 13px; color: #4a5568; line-height: 1.65; white-space: pre-wrap; }
+  .note-card-meta { font-size: 11px; color: #a0aec0; margin-top: 8px; }
+  .note-card-del { position: absolute; top: 12px; right: 12px; background: none; border: none; color: #e2e8f0; font-size: 18px; cursor: pointer; transition: color .2s; }
+  .note-card-del:hover { color: #e53e3e; }
+  .note-color-0 { border-left: 4px solid #667eea; }
+  .note-color-1 { border-left: 4px solid #48bb78; }
+  .note-color-2 { border-left: 4px solid #f6ad55; }
+  .note-color-3 { border-left: 4px solid #fc8181; }
+  .note-color-4 { border-left: 4px solid #76e4f7; }
+
+  /* BOTTOM NAV */
+  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: white; border-top: 1px solid #e2e8f0; display: flex; padding: 6px 0 10px; box-shadow: 0 -4px 20px rgba(0,0,0,.08); z-index: 100; }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 0; transition: all .2s; }
+  .nav-icon { font-size: 22px; }
+  .nav-label { font-size: 10px; font-weight: 600; color: #a0aec0; }
+  .nav-item.active .nav-label { color: #667eea; }
+  .nav-item.active .nav-icon { transform: scale(1.1); }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="app-title"><span>✈️</span> 2025 歐洲之旅</div>
+  <div class="top-tabs" id="topTabs">
+    <div class="top-tab active" data-panel="itinerary">🗓 行程</div>
+    <div class="top-tab" data-panel="spots">🏛 景點介紹</div>
+  </div>
+</div>
+
+<div class="main-content">
+
+<!-- ===== ITINERARY ===== -->
+<div class="tab-panel active" id="panel-itinerary">
+
+<div class="day-section">
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 1</div><div class="day-title">出發 · 台北→北京</div><div class="day-date">3/28 (五)</div><div class="day-chevron">▼</div></div>
+  <div class="day-body open">
+    <div class="event-item transport-item"><div class="event-icon">✈️</div><div class="event-content"><div class="event-time">13:15 → 16:45</div><div class="event-name">台北 → 北京 <span class="flight-badge">CA186</span></div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('quanjude')"><div class="event-icon">🦆</div><div class="event-content"><div class="event-name">晚餐：全聚德烤鴨</div><div class="event-desc">百年老字號，北京必吃烤鴨</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item clickable" onclick="goToSpot('qianmen')"><div class="event-icon">🚋</div><div class="event-content"><div class="event-name">夜遊前門大街 · 噹噹車</div><div class="event-desc">搭乘噹噹車欣賞夜晚的天安門廣場</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item"><div class="event-icon">🏨</div><div class="event-content"><div class="event-time">22:00</div><div class="event-name">北京藍灣國際酒店</div></div></div>
+  </div>
+</div>
+
+<div class="day-section">
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 2</div><div class="day-title">北京→維也納 · 哈修塔特</div><div class="day-date">3/29 (六)</div><div class="day-chevron">▼</div></div>
+  <div class="day-body open">
+    <div class="event-item transport-item"><div class="event-icon">✈️</div><div class="event-content"><div class="event-time">02:50 → 06:50</div><div class="event-name">北京 → 維也納 <span class="flight-badge">CA841</span></div></div></div>
+    <div class="event-item"><div class="event-icon">🚗</div><div class="event-content"><div class="event-name">維也納機場 → 自駕</div><div class="event-desc">前往哈修塔特及聖沃夫岡湖</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('schafbergbahn')"><div class="event-icon">🚞</div><div class="event-content"><div class="event-time">14:00</div><div class="event-name">聖沃夫岡 · 沙夫堡登山火車</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item"><div class="event-icon">🏨</div><div class="event-content"><div class="event-name">夜宿 Seehotel Berau Wolfgangsee</div><div class="event-desc">聖沃夫岡湖畔飯店</div></div></div>
+  </div>
+</div>
+
+<div class="day-section">
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 3</div><div class="day-title">哈修塔特 → 回維也納</div><div class="day-date">3/30 (日)</div><div class="day-chevron">▼</div></div>
+  <div class="day-body open">
+    <div class="event-item clickable" onclick="goToSpot('hallstatt')"><div class="event-icon">🏔</div><div class="event-content"><div class="event-name">哈修塔特</div><div class="event-desc">⚠️ 14:00 前必須離開</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item"><div class="event-icon">🚗</div><div class="event-content"><div class="event-name">回維也納市區</div><div class="event-desc">購買維也納 24H Pass（交通用）</div></div></div>
+    <div class="event-item"><div class="event-icon">🏨</div><div class="event-content"><div class="event-name">Check in 諾富特酒店</div><div class="event-desc">Novotel Wien Hauptbahnhof</div></div></div>
+    <div class="event-item"><div class="event-icon">🍽</div><div class="event-content"><div class="event-name">晚餐：Bohmerwald</div></div></div>
+  </div>
+</div>
+
+<div class="day-section">
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 4</div><div class="day-title">維也納市區探索</div><div class="day-date">3/31 (一)</div><div class="day-chevron">▼</div></div>
+  <div class="day-body open">
+    <div class="event-item clickable" onclick="goToSpot('belvedere')"><div class="event-icon">🌿</div><div class="event-content"><div class="event-time">10:00</div><div class="event-name">美景宮花園</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item"><div class="event-icon">🥩</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">午餐：Ribs of Vienna</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('peterskirche')"><div class="event-icon">🎵</div><div class="event-content"><div class="event-time">13:00–13:30</div><div class="event-name">聖彼得教堂免費音樂會</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item clickable" onclick="goToSpot('stephansdom')"><div class="event-icon">⛪</div><div class="event-content"><div class="event-time">14:00~</div><div class="event-name">聖斯德旺主教堂</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item clickable" onclick="goToSpot('graben')"><div class="event-icon">☕</div><div class="event-content"><div class="event-name">格拉本大街 → 德梅爾咖啡店</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item"><div class="event-icon">🎨</div><div class="event-content"><div class="event-name">維也納博物館</div></div></div>
+    <div class="event-item"><div class="event-icon">🍝</div><div class="event-content"><div class="event-time">18:30</div><div class="event-name">晚餐：Fine Fine all'Italiana</div></div></div>
+    <div class="event-item"><div class="event-icon">💡</div><div class="event-content"><div class="event-name">選擇性：卡爾教堂公園 / 音樂博物館</div><div class="event-desc">視體力決定</div></div></div>
+  </div>
+</div>
+
+<div class="day-section">
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 5</div><div class="day-title">美泉宮 · 購物</div><div class="day-date">4/1 (二)</div><div class="day-chevron">▼</div></div>
+  <div class="day-body open">
+    <div class="event-item"><div class="event-icon">🍖</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">午餐：Plachutta Stammhaus Hietzing</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('schonbrunn')"><div class="event-icon">🏰</div><div class="event-content"><div class="event-time">13:30</div><div class="event-name">美泉宮凱旋門</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item clickable" onclick="goToSpot('kindermuseum')"><div class="event-icon">🔬</div><div class="event-content"><div class="event-time">15:00</div><div class="event-name">維也納科技博物館 or 美泉宮兒童博物館</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item clickable" onclick="goToSpot('mariahilfer')"><div class="event-icon">🛒</div><div class="event-content"><div class="event-time">17:00</div><div class="event-name">瑪麗亞希爾夫大街（Müller）</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item"><div class="event-icon">🍽</div><div class="event-content"><div class="event-name">晚餐隨意</div></div></div>
+  </div>
+</div>
+
+<div class="day-section">
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 6</div><div class="day-title">維也納→布達佩斯</div><div class="day-date">4/2 (三)</div><div class="day-chevron">▼</div></div>
+  <div class="day-body open">
+    <div class="event-item"><div class="event-icon">🏨</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">Check out</div></div></div>
+    <div class="event-item transport-item"><div class="event-icon">🚄</div><div class="event-content"><div class="event-time">13:27 → 15:58</div><div class="event-name">維也納 → 布達佩斯 Kelenfold <span class="flight-badge">RJ1033</span></div></div></div>
+    <div class="event-item"><div class="event-icon">🎫</div><div class="event-content"><div class="event-name">購買 72H Pass</div><div class="event-desc">在布達佩斯車站購買</div></div></div>
+    <div class="event-item"><div class="event-icon">🏨</div><div class="event-content"><div class="event-time">17:00</div><div class="event-name">Check in · Collect Residence Budapest</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('nyugati')"><div class="event-icon">🍔</div><div class="event-content"><div class="event-name">晚餐：Nyugati McDonald's</div><div class="event-desc">世界最美麥當勞</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item"><div class="event-icon">🛒</div><div class="event-content"><div class="event-name">Spar 超市採買</div></div></div>
+  </div>
+</div>
+
+<div class="day-section">
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 7</div><div class="day-title">布達佩斯精華</div><div class="day-date">4/3 (四)</div><div class="day-chevron">▼</div></div>
+  <div class="day-body open">
+    <div class="event-item clickable" onclick="goToSpot('fishermans')"><div class="event-icon">🏰</div><div class="event-content"><div class="event-time">08:30</div><div class="event-name">漁人堡 → 布達城堡</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item clickable" onclick="goToSpot('chainbridge')"><div class="event-icon">🌉</div><div class="event-content"><div class="event-name">塞切尼鏈橋 → 多瑙河岸鞋子</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item"><div class="event-icon">🥘</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">午餐：Gettp Gulyas</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('stephens')"><div class="event-icon">⛪</div><div class="event-content"><div class="event-name">聖伊什特萬聖殿</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item"><div class="event-icon">🍦</div><div class="event-content"><div class="event-name">Gelarto Rosa 冰淇淋</div><div class="event-desc">超出名的玫瑰花形冰淇淋</div></div></div>
+    <div class="event-item"><div class="event-icon">🛍</div><div class="event-content"><div class="event-name">Váci 逛街 · Kids Republic 玩具店</div></div></div>
+    <div class="event-item"><div class="event-icon">🏛</div><div class="event-content"><div class="event-name">匈牙利博物館公園 · 中央咖啡館</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('danube')"><div class="event-icon">🚢</div><div class="event-content"><div class="event-time">19:00</div><div class="event-name">多瑙河遊船</div></div><div class="event-arrow">›</div></div>
+  </div>
+</div>
+
+<div class="day-section">
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 8</div><div class="day-title">小孩列車一日遊</div><div class="day-date">4/4 (五)</div><div class="day-chevron">▼</div></div>
+  <div class="day-body open">
+    <div class="event-item"><div class="event-icon">🚋</div><div class="event-content"><div class="event-name">Collect Residence → Városmajor 站</div><div class="event-desc">換齒軌電車</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('childrentrain')"><div class="event-icon">🚡</div><div class="event-content"><div class="event-name">齒軌電車 → 小孩列車 → 空中纜車一日遊</div><div class="event-desc">Széchenyi hegy → Jánoshegy → Libegő → 291公車回市區</div></div><div class="event-arrow">›</div></div>
+  </div>
+</div>
+
+<div class="day-section">
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 9</div><div class="day-title">布達佩斯最終日</div><div class="day-date">4/5 (六)</div><div class="day-chevron">▼</div></div>
+  <div class="day-body open">
+    <div class="event-item"><div class="event-icon">☕</div><div class="event-content"><div class="event-time">11:30</div><div class="event-name">午餐：Menza Étterem és Kávéház</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('parliament')"><div class="event-icon">🏛</div><div class="event-content"><div class="event-name">國會大廈</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item clickable" onclick="goToSpot('centralmarket')"><div class="event-icon">🛒</div><div class="event-content"><div class="event-name">布達佩斯中央市場</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item clickable" onclick="goToSpot('libertybridge')"><div class="event-icon">📸</div><div class="event-content"><div class="event-name">自由橋拍照（黃色電車經過）</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item clickable" onclick="goToSpot('gellert')"><div class="event-icon">⛰</div><div class="event-content"><div class="event-name">蓋勒特山</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item"><div class="event-icon">🛍</div><div class="event-content"><div class="event-name">Allee Mall 商場</div></div></div>
+  </div>
+</div>
+
+<div class="day-section">
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 10</div><div class="day-title">返程</div><div class="day-date">4/6–4/7</div><div class="day-chevron">▼</div></div>
+  <div class="day-body open">
+    <div class="event-item transport-item"><div class="event-icon">✈️</div><div class="event-content"><div class="event-time">13:00 (4/6) → 04:10 (4/7)</div><div class="event-name">布達佩斯 → 北京 <span class="flight-badge">CA720</span></div></div></div>
+    <div class="event-item transport-item"><div class="event-icon">✈️</div><div class="event-content"><div class="event-time">08:30 → 11:40 (4/7)</div><div class="event-name">北京 → 台北 <span class="flight-badge">CA185</span></div></div></div>
+    <div class="event-item"><div class="event-icon">🏠</div><div class="event-content"><div class="event-name">平安回家 🎉</div></div></div>
+  </div>
+</div>
+
+<div style="height:8px"></div>
+</div>
+
+<!-- ===== SPOTS ===== -->
+<div class="tab-panel" id="panel-spots">
+<div class="spots-header"><h3>所有景點 · 詳細介紹</h3></div>
+
+<div class="spot-card" id="spot-quanjude">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=80" alt="烤鴨">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&q=80" alt="北京美食">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🦆</div><div class="spot-info"><div class="spot-name">全聚德烤鴨</div><div class="spot-location">📍 北京，前門店</div></div><div class="spot-day-badge">DAY 1</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">創立於 1864 年的百年老字號，以掛爐烤鴨聞名全球。前門店是最具代表性的旗艦店，鴨皮金黃酥脆，搭配薄餅、蔥絲、甜麵醬食用，是到北京必嚐的美食體驗。</div>
+    <div class="spot-tags"><span class="spot-tag">🍽 美食</span><span class="spot-tag">北京必吃</span><span class="spot-tag">百年老店</span></div>
+    <div class="spot-tip">💡 建議事先訂位，尤其旺季人潮眾多。可點「片鴨」服務，師傅當場片鴨，視覺享受十足！</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-qianmen">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400&q=80" alt="天安門">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=400&q=80" alt="北京夜景">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🚋</div><div class="spot-info"><div class="spot-name">前門大街 · 噹噹車</div><div class="spot-location">📍 北京，前門</div></div><div class="spot-day-badge">DAY 1</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">前門大街是北京著名的歷史商業街，延伸至天安門廣場南端。夜晚燈火通明，氛圍熱鬧。噹噹車是仿古有軌電車，沿線行駛可欣賞天安門廣場的夜間景致，是難得的北京夜遊方式。</div>
+    <div class="spot-tags"><span class="spot-tag">🌙 夜遊</span><span class="spot-tag">歷史街區</span><span class="spot-tag">有軌電車</span></div>
+    <div class="spot-tip">💡 天安門廣場夜間開放，燈光璀璨。噹噹車票可在車站購買，記得提前確認末班車時間。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-hallstatt">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80" alt="哈修塔特">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1555990793-da11153b6513?w=400&q=80" alt="奧地利小鎮">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🏔</div><div class="spot-info"><div class="spot-name">哈修塔特</div><div class="spot-location">📍 奧地利，薩爾茨卡默古特</div></div><div class="spot-day-badge">DAY 3</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">被譽為「世界上最美麗的小鎮」，坐落在哈修塔特湖畔，背靠陡峭山壁。UNESCO 世界文化遺產，色彩繽紛的房屋倒映在湖面上，宛如明信片場景。世界上最古老的鹽礦也在此處。</div>
+    <div class="spot-tags"><span class="spot-tag">🌍 世界遺產</span><span class="spot-tag">湖景</span><span class="spot-tag">奧地利小鎮</span></div>
+    <div class="spot-tip">💡 ⚠️ 請務必 14:00 前離開！小鎮車位稀少，建議停在 P1 停車場後步行或搭船進入。早晨人潮最少，光線也最美。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-schafbergbahn">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1473625247510-8ceb1760943f?w=400&q=80" alt="登山火車">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80" alt="山頂景色">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🚞</div><div class="spot-info"><div class="spot-name">沙夫堡登山火車</div><div class="spot-location">📍 聖沃夫岡，奧地利</div></div><div class="spot-day-badge">DAY 2</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">Schafbergbahn 是奧地利最陡峭的齒軌登山鐵路之一，從聖沃夫岡出發攀登至海拔 1783 公尺山頂。蒸汽機車緩緩爬升，沿途薩爾茨卡默古特湖群盡收眼底。《真善美》電影也曾在此取景。</div>
+    <div class="spot-tags"><span class="spot-tag">🚞 登山鐵路</span><span class="spot-tag">蒸汽火車</span><span class="spot-tag">絕景</span></div>
+    <div class="spot-tip">💡 14:00 班次建議提早抵達購票，旺季可能須排隊。山頂天氣多變，攜帶薄外套備用。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-belvedere">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=400&q=80" alt="美景宮">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&q=80" alt="維也納宮殿">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🌿</div><div class="spot-info"><div class="spot-name">美景宮花園</div><div class="spot-location">📍 維也納，奧地利</div></div><div class="spot-day-badge">DAY 4</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">Belvedere 宮殿群建於 18 世紀，是巴洛克式建築傑作。上美景宮收藏克林姆名作《吻》，下美景宮設有裝飾藝術展。宮殿花園法式對稱設計精美，噴泉、雕像林立，遠處可望維也納市景。</div>
+    <div class="spot-tags"><span class="spot-tag">🎨 克林姆《吻》</span><span class="spot-tag">巴洛克宮殿</span><span class="spot-tag">免費花園</span></div>
+    <div class="spot-tip">💡 花園免費入場，宮殿需購票。《吻》原畫在上美景宮，是維也納最受歡迎的館藏之一。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-peterskirche">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80" alt="教堂">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" alt="古典音樂">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🎵</div><div class="spot-info"><div class="spot-name">聖彼得教堂</div><div class="spot-location">📍 維也納，格拉本附近</div></div><div class="spot-day-badge">DAY 4</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">Peterskirche 是維也納最美麗的巴洛克教堂之一，建於 1733 年。金色裝飾、壁畫與管風琴造就奢華室內空間。每週定期舉辦免費古典音樂會，在神聖空間中聆聽現場演奏是難忘體驗。</div>
+    <div class="spot-tags"><span class="spot-tag">🎼 免費音樂會</span><span class="spot-tag">巴洛克教堂</span><span class="spot-tag">13:00–13:30</span></div>
+    <div class="spot-tip">💡 免費音樂會通常 13:00 開始，30 分鐘，建議提前 10 分鐘入座。音樂會期間請勿拍照以示尊重。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-stephansdom">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400&q=80" alt="維也納大教堂">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=400&q=80" alt="哥德式教堂">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">⛪</div><div class="spot-info"><div class="spot-name">聖斯德旺主教堂</div><div class="spot-location">📍 維也納，史蒂芬廣場</div></div><div class="spot-day-badge">DAY 4</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">Stephansdom 是維也納的精神象徵，哥德式尖塔高達 136 公尺，彩色磁磚屋頂圖案鮮明。教堂已有 800 年歷史，地下有哈布斯堡王朝的地下墓穴。登上南塔可俯瞰維也納全城。</div>
+    <div class="spot-tags"><span class="spot-tag">⛪ 維也納地標</span><span class="spot-tag">哥德式</span><span class="spot-tag">哈布斯堡墓穴</span></div>
+    <div class="spot-tip">💡 外觀免費，登塔及地下墓穴需購票。彩色屋頂從高處角度看最壯觀，可搭電梯至瞭望台。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-graben">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=400&q=80" alt="維也納街道">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1464195244916-405fa0a82545?w=400&q=80" alt="咖啡館">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">☕</div><div class="spot-info"><div class="spot-name">格拉本大街 · 德梅爾咖啡</div><div class="spot-location">📍 維也納內城</div></div><div class="spot-day-badge">DAY 4</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">Graben 是維也納最精華的步行購物街，精品名店林立。德梅爾咖啡（Café Demel）創立於 1786 年，曾是哈布斯堡皇室御用糕點店，招牌沙赫蛋糕（Sachertorte）與手工糖果是必買伴手禮。</div>
+    <div class="spot-tags"><span class="spot-tag">🛍 購物街</span><span class="spot-tag">皇室咖啡館</span><span class="spot-tag">沙赫蛋糕</span></div>
+    <div class="spot-tip">💡 德梅爾現場座位常滿，建議下午茶時段提早到。外帶沙赫蛋糕禮盒是絕佳伴手禮。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-schonbrunn">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=400&q=80" alt="美泉宮">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1579548122080-c35fd6820ecb?w=400&q=80" alt="宮殿花園">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🏰</div><div class="spot-info"><div class="spot-name">美泉宮 · 凱旋門</div><div class="spot-location">📍 維也納，奧地利</div></div><div class="spot-day-badge">DAY 5</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">Schönbrunn 美泉宮是哈布斯堡王朝的夏宮，UNESCO 世界遺產。宮殿後方山丘上的凱旋門（Gloriette）俯瞰整座宮殿與維也納市區，視野絕佳。宮殿有 1441 個房間，金碧輝煌。</div>
+    <div class="spot-tags"><span class="spot-tag">🌍 世界遺產</span><span class="spot-tag">哈布斯堡夏宮</span><span class="spot-tag">全景視野</span></div>
+    <div class="spot-tip">💡 凱旋門內有咖啡館，可俯瞰美泉宮全景享用下午茶。建議購買宮殿+凱旋門套票更划算。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-kindermuseum">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1530099486328-e021101a494a?w=400&q=80" alt="科技博物館">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400&q=80" alt="兒童博物館">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🔬</div><div class="spot-info"><div class="spot-name">美泉宮兒童博物館 / 科技博物館</div><div class="spot-location">📍 維也納</div></div><div class="spot-day-badge">DAY 5</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">美泉宮兒童博物館讓孩子穿上宮廷服裝體驗皇室生活，寓教於樂，適合 4–13 歲。維也納科技博物館展示科技與交通發展，有大量可動手操作的展品，適合較大孩子。</div>
+    <div class="spot-tags"><span class="spot-tag">👶 親子必訪</span><span class="spot-tag">互動展覽</span><span class="spot-tag">皇室體驗</span></div>
+    <div class="spot-tip">💡 兒童博物館假日需事先預約。科技博物館無需預約，步行可達，展品豐富好玩。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-mariahilfer">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80" alt="購物大街">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&q=80" alt="藥妝店">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🛒</div><div class="spot-info"><div class="spot-name">瑪麗亞希爾夫大街</div><div class="spot-location">📍 維也納第六、七區</div></div><div class="spot-day-badge">DAY 5</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">維也納最長的購物大街，全長約 1.5 公里，集結 H&M、Zara、Müller 藥妝、Spar 超市等平價商店，也有多家百貨公司。Müller 是奧地利連鎖藥妝店，藥妝保養品品項豐富，價格實惠。</div>
+    <div class="spot-tags"><span class="spot-tag">🛍 購物大街</span><span class="spot-tag">Müller 藥妝</span><span class="spot-tag">1.5km 步行街</span></div>
+    <div class="spot-tip">💡 Müller 有歐洲品牌如 Weleda、Alverde，台灣少見。記得留意退稅門檻，購物滿額可退稅！</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-nyugati">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80" alt="麥當勞">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1556742393-d75f468bfcb0?w=400&q=80" alt="新藝術建築">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🍔</div><div class="spot-info"><div class="spot-name">Nyugati 世界最美麥當勞</div><div class="spot-location">📍 布達佩斯，Nyugati 站旁</div></div><div class="spot-day-badge">DAY 6</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">被譽為「世界最美麥當勞」！建築本身是 1877 年由艾菲爾公司建造，保留了新藝術風格的玻璃屋頂與鑄鐵裝飾結構，用餐環境宛如宮殿，是全球麥當勞迷朝聖地。</div>
+    <div class="spot-tags"><span class="spot-tag">🍔 打卡必去</span><span class="spot-tag">艾菲爾風格建築</span><span class="spot-tag">新藝術</span></div>
+    <div class="spot-tip">💡 玻璃天頂與鑄鐵柱非常壯觀，記得抬頭欣賞。點完餐在大廳拍張照留念！</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-fishermans">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1561634507-a5e9db4e5df7?w=400&q=80" alt="漁人堡">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1581262208435-41726149a759?w=400&q=80" alt="布達城堡">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🏰</div><div class="spot-info"><div class="spot-name">漁人堡 · 布達城堡</div><div class="spot-location">📍 布達佩斯，城堡山</div></div><div class="spot-day-badge">DAY 7</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">漁人堡（Halászbástya）七座白色塔樓象徵七個馬扎爾部落，從城牆上俯瞰多瑙河、鏈橋與佩斯城區，景致絕美。布達城堡（Buda Castle）是哈布斯堡王宮，現為國家美術館。</div>
+    <div class="spot-tags"><span class="spot-tag">👑 城堡山</span><span class="spot-tag">全景視野</span><span class="spot-tag">打卡景點</span></div>
+    <div class="spot-tip">💡 早晨 8:30 人潮最少，光線最美！外牆免費，進塔樓需購票。可搭城堡巴士上山省體力。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-chainbridge">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1551373923-27d3b5a5bfbf?w=400&q=80" alt="塞切尼鏈橋">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1553913861-c0fddf2619ee?w=400&q=80" alt="多瑙河">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🌉</div><div class="spot-info"><div class="spot-name">塞切尼鏈橋 · 多瑙河岸鞋子</div><div class="spot-location">📍 布達佩斯，多瑙河畔</div></div><div class="spot-day-badge">DAY 7</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">鏈橋（Széchenyi Chain Bridge）是布達佩斯第一座永久橋梁，建於 1849 年，夜晚燈火璀璨。河岸鞋子紀念碑是二戰猶太人遇難地，60 雙鑄鐵鞋靜靜佇立，令人動容。</div>
+    <div class="spot-tags"><span class="spot-tag">🌉 城市地標</span><span class="spot-tag">歷史紀念碑</span><span class="spot-tag">夜間必看</span></div>
+    <div class="spot-tip">💡 鞋子紀念碑位於議會大廈附近北側河岸。夜晚鏈橋打燈非常美麗，建議傍晚再來拍照。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-stephens">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80" alt="聖伊什特萬聖殿">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&q=80" alt="教堂內部">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">⛪</div><div class="spot-info"><div class="spot-name">聖伊什特萬聖殿</div><div class="spot-location">📍 布達佩斯，佩斯中心</div></div><div class="spot-day-badge">DAY 7</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">布達佩斯最大的天主教教堂，穹頂高達 96 公尺。內部收藏伊什特萬一世的聖右手遺物。登頂可俯瞰整個布達佩斯，附近就是著名的 Gelarto Rosa 玫瑰冰淇淋！</div>
+    <div class="spot-tags"><span class="spot-tag">⛪ 宗教地標</span><span class="spot-tag">登頂全景</span><span class="spot-tag">聖右手遺物</span></div>
+    <div class="spot-tip">💡 進入教堂需自由捐獻，登塔需購票。Gelarto Rosa 就在附近，別忘了玫瑰花形冰淇淋！</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-danube">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1592906209472-a36b1f3782ef?w=400&q=80" alt="多瑙河夜景">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1551373923-27d3b5a5bfbf?w=400&q=80" alt="布達佩斯夜景">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🚢</div><div class="spot-info"><div class="spot-name">多瑙河遊船</div><div class="spot-location">📍 布達佩斯，多瑙河</div></div><div class="spot-day-badge">DAY 7</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">夜間多瑙河遊船是布達佩斯最浪漫的體驗，從水上欣賞兩岸燈火通明的國會大廈、漁人堡、鏈橋與布達城堡，整段多瑙河岸已列入 UNESCO 世界遺產。晚上 7 點出發，夜色正美。</div>
+    <div class="spot-tags"><span class="spot-tag">🌊 夜遊</span><span class="spot-tag">世界遺產</span><span class="spot-tag">19:00 出發</span></div>
+    <div class="spot-tip">💡 Legenda 是知名遊船公司。建議網路提前訂票，晚間氣溫低請攜帶外套。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-childrentrain">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=400&q=80" alt="小孩列車">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&q=80" alt="空中纜車">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🚂</div><div class="spot-info"><div class="spot-name">小孩列車一日遊</div><div class="spot-location">📍 布達佩斯，布達山</div></div><div class="spot-day-badge">DAY 8</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">Children's Railway（Gyermekvasút）由 10–14 歲兒童負責站務，穿越布達山丘森林。搭配齒軌電車與 Libegő 空中纜車，可一日體驗三種特色交通工具，是布達佩斯最獨特的親子行程。</div>
+    <div class="spot-tags"><span class="spot-tag">🚂 兒童列車</span><span class="spot-tag">🚡 空中纜車</span><span class="spot-tag">親子必訪</span></div>
+    <div class="spot-tip">💡 路線：Városmajor→齒軌電車→Széchenyi hegy→步行→小孩列車→Jánoshegy→步行→Libegő纜車→Zugliget→291公車回市區。全程約半天。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-parliament">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1592906209472-a36b1f3782ef?w=400&q=80" alt="國會大廈">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1517230878791-4d28214057c2?w=400&q=80" alt="國會大廈夜景">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🏛</div><div class="spot-info"><div class="spot-name">布達佩斯國會大廈</div><div class="spot-location">📍 布達佩斯，多瑙河西岸</div></div><div class="spot-day-badge">DAY 9</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">匈牙利國會大廈（Országház）是世界上最壯觀的國會建築之一，新哥德式風格，穹頂高 96 公尺，正面長 268 公尺，內有 691 個房間。可參加導覽欣賞聖伊什特萬王冠珠寶。</div>
+    <div class="spot-tags"><span class="spot-tag">🏛 世界地標</span><span class="spot-tag">導覽參觀</span><span class="spot-tag">王冠珠寶</span></div>
+    <div class="spot-tip">💡 建議事先在官網預訂導覽票，現場排隊人多。多瑙河對岸（布達側）可拍到最完整的全景。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-centralmarket">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&q=80" alt="中央市場">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1516685018646-549198525c1b?w=400&q=80" alt="市場食材">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">🛒</div><div class="spot-info"><div class="spot-name">布達佩斯中央市場</div><div class="spot-location">📍 布達佩斯，自由橋旁</div></div><div class="spot-day-badge">DAY 9</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">Nagy Vásárcsarnok 是布達佩斯最大的室內市場，建於 1897 年。一樓有新鮮蔬果、肉類、醃製品，二樓有匈牙利紀念品、辣椒粉、鵝肝、手工藝品，是採購伴手禮最佳地點。</div>
+    <div class="spot-tags"><span class="spot-tag">🌶 辣椒粉</span><span class="spot-tag">🦆 鵝肝醬</span><span class="spot-tag">伴手禮天堂</span></div>
+    <div class="spot-tip">💡 必買：匈牙利辣椒粉（Paprika）、鵝肝醬、托卡伊葡萄酒。二樓有 Lángos 炸麵包一定要嘗！</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-libertybridge">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1551373923-27d3b5a5bfbf?w=400&q=80" alt="自由橋">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&q=80" alt="電車">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">📸</div><div class="spot-info"><div class="spot-name">自由橋</div><div class="spot-location">📍 布達佩斯，多瑙河</div></div><div class="spot-day-badge">DAY 9</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">Szabadság híd 自由橋以鮮明的綠色鐵架和橋頂神話鳥圖騰聞名。黃色 49 號電車定期穿越橋面，與橋身形成經典的布達佩斯畫面，是攝影愛好者的熱門取景點。</div>
+    <div class="spot-tags"><span class="spot-tag">📸 攝影熱點</span><span class="spot-tag">🚃 黃色電車</span><span class="spot-tag">打卡地標</span></div>
+    <div class="spot-tip">💡 等待電車過橋約每 5–10 分鐘一班，在橋頭等候抓準時機拍攝。從中央市場步行即到。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-gellert">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1553913861-c0fddf2619ee?w=400&q=80" alt="蓋勒特山">
+    <img class="spot-photo" src="https://images.unsplash.com/photo-1560185127-6a8a87b5b0d4?w=400&q=80" alt="蓋勒特溫泉">
+  </div>
+  <div class="spot-card-header"><div class="spot-emoji">⛰</div><div class="spot-info"><div class="spot-name">蓋勒特山</div><div class="spot-location">📍 布達佩斯，多瑙河西岸</div></div><div class="spot-day-badge">DAY 9</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">Gellért-hegy 海拔 235 公尺，是俯瞰布達佩斯全景最佳地點之一。山頂有自由女神像與城堡遺跡。山腳下的蓋勒特溫泉浴場以新藝術風格建築聞名，是布達佩斯最豪華的溫泉之一。</div>
+    <div class="spot-tags"><span class="spot-tag">⛰ 全景俯瞰</span><span class="spot-tag">🗽 自由女神像</span><span class="spot-tag">溫泉浴場</span></div>
+    <div class="spot-tip">💡 步行上山約 20–30 分鐘，路況良好。蓋勒特溫泉值得體驗，記得攜帶泳衣。</div>
+  </div>
+</div>
+
+<div style="height:8px"></div>
+</div>
+
+<!-- ===== EXPENSES ===== -->
+<div class="tab-panel" id="panel-expenses">
+  <div class="expense-container">
+    <div class="expense-summary">
+      <div class="expense-total-label">旅程總花費</div>
+      <div class="expense-total-amount" id="totalAmount">NT$ 0</div>
+      <div class="expense-currency">新台幣換算（依匯率估算）</div>
+      <div class="expense-by-cat" id="catSummary"></div>
+    </div>
+    <div class="expense-add-section">
+      <div class="section-title">💳 新增消費</div>
+      <div class="form-row">
+        <div class="form-group" style="flex:2"><label>項目名稱</label><input type="text" id="expName" placeholder="e.g. 全聚德烤鴨"></div>
+        <div class="form-group"><label>日期</label><input type="text" id="expDate" placeholder="3/28"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>金額</label><input type="number" id="expAmount" placeholder="0"></div>
+        <div class="form-group"><label>幣別</label>
+          <select id="expCurrency"><option value="TWD">TWD 台幣</option><option value="CNY">CNY 人民幣</option><option value="EUR">EUR 歐元</option><option value="HUF">HUF 匈牙利福林</option></select>
+        </div>
+        <div class="form-group"><label>類別</label>
+          <select id="expCat"><option value="🍽 餐飲">🍽 餐飲</option><option value="🏨 住宿">🏨 住宿</option><option value="✈️ 交通">✈️ 交通</option><option value="🎫 門票">🎫 門票</option><option value="🛍 購物">🛍 購物</option><option value="💊 其他">💊 其他</option></select>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addExpense()">＋ 新增</button>
+    </div>
+    <div class="expense-list" id="expenseList">
+      <div class="expense-list-header"><div class="section-title" style="margin-bottom:0">📋 消費記錄</div></div>
+      <div class="empty-state" id="emptyExpense"><div class="empty-icon">💰</div><p>還沒有消費記錄<br>新增第一筆花費吧！</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NOTES ===== -->
+<div class="tab-panel" id="panel-notes">
+  <div class="notes-container">
+    <div class="note-add-section">
+      <div class="section-title">📝 新增筆記</div>
+      <input class="note-title-input" type="text" id="noteTitle" placeholder="筆記標題（選填）">
+      <textarea class="note-textarea" id="noteText" placeholder="旅遊心得、待辦事項、提醒..."></textarea>
+      <div class="note-actions">
+        <button class="btn-note btn-note-add" onclick="addNote()">＋ 儲存筆記</button>
+        <button class="btn-note btn-note-clear" onclick="clearNoteForm()">清除</button>
+      </div>
+    </div>
+    <div class="notes-list" id="notesList">
+      <div class="empty-state" id="emptyNotes"><div class="empty-icon">📓</div><p>還沒有筆記<br>記下旅途中的點滴吧！</p></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- main-content -->
+
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="switchMain('itinerary-spots')"><div class="nav-icon">🗓</div><div class="nav-label">行程</div></div>
+  <div class="nav-item" onclick="switchMain('expenses')"><div class="nav-icon">💳</div><div class="nav-label">記帳</div></div>
+  <div class="nav-item" onclick="switchMain('notes')"><div class="nav-icon">📝</div><div class="nav-label">記事本</div></div>
+</div>
+
+<script>
+let currentMain='itinerary-spots', currentTop='itinerary', expenses=[], notes=[], savedItineraryScroll=0;
+
+function toggleDay(header){
+  const body=header.nextElementSibling, isOpen=header.classList.contains('open');
+  header.classList.toggle('open',!isOpen);
+  body.classList.toggle('open',!isOpen);
+}
+
+document.querySelectorAll('.top-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    const p=tab.dataset.panel; currentTop=p;
+    document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-itinerary').classList.toggle('active',p==='itinerary');
+    document.getElementById('panel-spots').classList.toggle('active',p==='spots');
+    if(p==='itinerary'){
+      const mc=document.querySelector('.main-content');
+      requestAnimationFrame(()=>mc.scrollTo({top:savedItineraryScroll,behavior:'instant'}));
+    }
+  });
+});
+
+function switchMain(s){
+  currentMain=s;
+  document.querySelectorAll('.nav-item').forEach((item,i)=>{
+    item.classList.toggle('active',(s==='itinerary-spots'&&i===0)||(s==='expenses'&&i===1)||(s==='notes'&&i===2));
+  });
+  const tabs=document.getElementById('topTabs');
+  ['itinerary','spots','expenses','notes'].forEach(p=>document.getElementById('panel-'+p).classList.remove('active'));
+  if(s==='itinerary-spots'){tabs.style.display='flex';document.getElementById('panel-'+currentTop).classList.add('active');}
+  else{tabs.style.display='none';document.getElementById('panel-'+s).classList.add('active');}
+}
+
+function goToSpot(id){
+  const mc=document.querySelector('.main-content');
+  savedItineraryScroll=mc.scrollTop;
+
+  currentTop='spots';
+  document.querySelectorAll('.top-tab').forEach(t=>t.classList.toggle('active',t.dataset.panel==='spots'));
+  if(currentMain!=='itinerary-spots')switchMain('itinerary-spots');
+  document.getElementById('panel-itinerary').classList.remove('active');
+  document.getElementById('panel-spots').classList.add('active');
+
+  setTimeout(()=>{
+    const card=document.getElementById('spot-'+id);
+    if(card){
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('highlight');
+      void card.offsetWidth;
+      card.classList.add('highlight');
+    }
+  },80);
+}
+
+const RATES={TWD:1,CNY:4.4,EUR:35,HUF:0.09};
+const CAT_ICONS={'🍽 餐飲':'🍽','🏨 住宿':'🏨','✈️ 交通':'✈️','🎫 門票':'🎫','🛍 購物':'🛍','💊 其他':'💊'};
+
+function addExpense(){
+  const name=document.getElementById('expName').value.trim(), amount=parseFloat(document.getElementById('expAmount').value);
+  if(!name||!amount)return;
+  expenses.push({id:Date.now(),name,amount,currency:document.getElementById('expCurrency').value,cat:document.getElementById('expCat').value,date:document.getElementById('expDate').value.trim()});
+  document.getElementById('expName').value='';document.getElementById('expAmount').value='';document.getElementById('expDate').value='';
+  saveData();renderExpenses();
+}
+function deleteExpense(id){expenses=expenses.filter(e=>e.id!==id);saveData();renderExpenses();}
+function renderExpenses(){
+  const list=document.getElementById('expenseList');
+  list.querySelectorAll('.expense-item').forEach(el=>el.remove());
+  if(!expenses.length){document.getElementById('emptyExpense').style.display='block';document.getElementById('totalAmount').textContent='NT$ 0';document.getElementById('catSummary').innerHTML='';return;}
+  document.getElementById('emptyExpense').style.display='none';
+  let total=0;const ct={};
+  expenses.forEach(e=>{
+    const twd=e.amount*(RATES[e.currency]||1);total+=twd;ct[e.cat]=(ct[e.cat]||0)+twd;
+    const item=document.createElement('div');item.className='expense-item';
+    item.innerHTML=`<div class="expense-item-icon">${CAT_ICONS[e.cat]||'💰'}</div><div class="expense-item-info"><div class="expense-item-name">${e.name}</div><div class="expense-item-meta">${e.date?e.date+' · ':''}${e.cat} · ${e.currency}</div></div><div class="expense-item-amount">-${e.currency==='TWD'?'NT$':e.currency} ${e.amount.toLocaleString()}</div><button class="expense-item-del" onclick="deleteExpense(${e.id})">×</button>`;
+    list.appendChild(item);
+  });
+  document.getElementById('totalAmount').textContent='NT$ '+Math.round(total).toLocaleString();
+  document.getElementById('catSummary').innerHTML=Object.entries(ct).map(([c,a])=>`<div class="cat-chip">${c.split(' ')[0]} NT$${Math.round(a).toLocaleString()}</div>`).join('');
+}
+
+const NC=['note-color-0','note-color-1','note-color-2','note-color-3','note-color-4'];
+
+function saveData(){
+  try{localStorage.setItem('trip_expenses',JSON.stringify(expenses));localStorage.setItem('trip_notes',JSON.stringify(notes));}catch(e){}
+}
+function loadData(){
+  try{const e=localStorage.getItem('trip_expenses');if(e)expenses=JSON.parse(e);}catch(e){}
+  try{const n=localStorage.getItem('trip_notes');if(n)notes=JSON.parse(n);}catch(e){}
+  renderExpenses();renderNotes();
+}
+
+function addNote(){
+  const text=document.getElementById('noteText').value.trim();if(!text)return;
+  notes.unshift({id:Date.now(),title:document.getElementById('noteTitle').value.trim()||'筆記',text,time:new Date().toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})});
+  clearNoteForm();saveData();renderNotes();
+}
+function clearNoteForm(){document.getElementById('noteTitle').value='';document.getElementById('noteText').value='';}
+function deleteNote(id){notes=notes.filter(n=>n.id!==id);saveData();renderNotes();}
+function renderNotes(){
+  const list=document.getElementById('notesList');
+  list.querySelectorAll('.note-card').forEach(el=>el.remove());
+  if(!notes.length){document.getElementById('emptyNotes').style.display='block';return;}
+  document.getElementById('emptyNotes').style.display='none';
+  notes.forEach((n,i)=>{
+    const card=document.createElement('div');card.className=`note-card ${NC[i%5]}`;
+    card.innerHTML=`<div class="note-card-title">${n.title}</div><div class="note-card-body">${n.text}</div><div class="note-card-meta">🕐 ${n.time}</div><button class="note-card-del" onclick="deleteNote(${n.id})">×</button>`;
+    list.appendChild(card);
+  });
+}
+loadData();
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+</script>
+</body>
+</html>
