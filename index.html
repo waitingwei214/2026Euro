@@ -718,8 +718,7 @@ function goToSpot(id){
   setTimeout(()=>{
     const card=document.getElementById('spot-'+id);
     if(card){
-      // 在 panel-spots 自己的捲動容器內，用 scrollIntoView 即可正確定位
-      card.scrollIntoView({behavior:'smooth', block:'start'});
+      scrollWithOffset(document.getElementById('panel-spots'), card);
       card.classList.remove('highlight');
       void card.offsetWidth;
       card.classList.add('highlight');
@@ -734,8 +733,16 @@ function goToDay(n){
   document.getElementById('panel-itinerary').classList.add('active');
   setTimeout(()=>{
     const day=document.getElementById('day-'+n);
-    if(day) day.scrollIntoView({behavior:'smooth', block:'start'});
+    if(day) scrollWithOffset(document.getElementById('panel-itinerary'), day);
   },80);
+}
+
+function scrollWithOffset(panel, el){
+  const offset = 12; // 額外往下的間距（px）
+  const panelRect = panel.getBoundingClientRect();
+  const elRect = el.getBoundingClientRect();
+  const scrollTop = panel.scrollTop + (elRect.top - panelRect.top) - offset;
+  panel.scrollTo({top: scrollTop, behavior: 'smooth'});
 }
 
 const RATES={TWD:1,CNY:4.4,EUR:35,HUF:0.09};
