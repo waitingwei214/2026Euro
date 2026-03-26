@@ -32,9 +32,9 @@
   .top-tab.active { background: #f0f4f8; color: #667eea; }
   .top-tab:not(.active):hover { background: rgba(255,255,255,0.15); color: white; }
 
-  .main-content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
+  .main-content { flex: 1; position: relative; overflow: hidden; }
+  .tab-panel { position: absolute; inset: 0; overflow-y: auto; padding-bottom: 80px; visibility: hidden; pointer-events: none; }
+  .tab-panel.active { visibility: visible; pointer-events: auto; }
 
   /* DAY SECTION */
   .day-section { margin: 14px 12px 0; }
@@ -104,7 +104,11 @@
   .spot-info { flex: 1; }
   .spot-name { font-size: 15px; font-weight: 700; color: #2d3748; }
   .spot-location { font-size: 11px; color: #a0aec0; margin-top: 2px; }
-  .spot-day-badge { background: #667eea15; color: #667eea; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+  .spot-day-badge { background: #667eea15; color: #667eea; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; white-space: nowrap; transition: background 0.2s, color 0.2s; }
+  .spot-card-header-link { cursor: pointer; transition: background 0.15s; border-radius: 12px 12px 0 0; }
+  .spot-card-header-link:hover { background: #f0f4ff; }
+  .spot-card-header-link:hover .spot-day-badge { background: #667eea; color: white; }
+  .spot-card-header-link:hover .spot-name { color: #667eea; }
 
   .spot-divider { height: 1px; background: #f0f4f8; margin: 0 14px; }
   .spot-body { padding: 10px 14px 14px; }
@@ -195,7 +199,7 @@
 <!-- ===== ITINERARY ===== -->
 <div class="tab-panel active" id="panel-itinerary">
 
-<div class="day-section">
+<div class="day-section" id="day-1">
   <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 1</div><div class="day-title">出發 · 台北→北京</div><div class="day-date">3/28 (五)</div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item transport-item"><div class="event-icon">✈️</div><div class="event-content"><div class="event-time">13:15 → 16:45</div><div class="event-name">台北 → 北京 <span class="flight-badge">CA186</span></div></div></div>
@@ -205,7 +209,7 @@
   </div>
 </div>
 
-<div class="day-section">
+<div class="day-section" id="day-2">
   <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 2</div><div class="day-title">北京→維也納 · 哈修塔特</div><div class="day-date">3/29 (六)</div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item transport-item"><div class="event-icon">✈️</div><div class="event-content"><div class="event-time">02:50 → 06:50</div><div class="event-name">北京 → 維也納 <span class="flight-badge">CA841</span></div></div></div>
@@ -215,7 +219,7 @@
   </div>
 </div>
 
-<div class="day-section">
+<div class="day-section" id="day-3">
   <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 3</div><div class="day-title">哈修塔特 → 回維也納</div><div class="day-date">3/30 (日)</div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item clickable" onclick="goToSpot('hallstatt')"><div class="event-icon">🏔</div><div class="event-content"><div class="event-name">哈修塔特</div><div class="event-desc">⚠️ 14:00 前必須離開</div></div><div class="event-arrow">›</div></div>
@@ -225,7 +229,7 @@
   </div>
 </div>
 
-<div class="day-section">
+<div class="day-section" id="day-4">
   <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 4</div><div class="day-title">維也納市區探索</div><div class="day-date">3/31 (一)</div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item clickable" onclick="goToSpot('belvedere')"><div class="event-icon">🌿</div><div class="event-content"><div class="event-time">10:00</div><div class="event-name">美景宮花園</div></div><div class="event-arrow">›</div></div>
@@ -239,7 +243,7 @@
   </div>
 </div>
 
-<div class="day-section">
+<div class="day-section" id="day-5">
   <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 5</div><div class="day-title">美泉宮 · 購物</div><div class="day-date">4/1 (二)</div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item"><div class="event-icon">🍖</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">午餐：Plachutta Stammhaus Hietzing</div></div></div>
@@ -250,7 +254,7 @@
   </div>
 </div>
 
-<div class="day-section">
+<div class="day-section" id="day-6">
   <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 6</div><div class="day-title">維也納→布達佩斯</div><div class="day-date">4/2 (三)</div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item"><div class="event-icon">🏨</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">Check out</div></div></div>
@@ -262,7 +266,7 @@
   </div>
 </div>
 
-<div class="day-section">
+<div class="day-section" id="day-7">
   <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 7</div><div class="day-title">布達佩斯精華</div><div class="day-date">4/3 (四)</div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item clickable" onclick="goToSpot('fishermans')"><div class="event-icon">🏰</div><div class="event-content"><div class="event-time">08:30</div><div class="event-name">漁人堡 → 布達城堡</div></div><div class="event-arrow">›</div></div>
@@ -276,7 +280,7 @@
   </div>
 </div>
 
-<div class="day-section">
+<div class="day-section" id="day-8">
   <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 8</div><div class="day-title">小孩列車一日遊</div><div class="day-date">4/4 (五)</div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item"><div class="event-icon">🚋</div><div class="event-content"><div class="event-name">Collect Residence → Városmajor 站</div><div class="event-desc">換齒軌電車</div></div></div>
@@ -284,7 +288,7 @@
   </div>
 </div>
 
-<div class="day-section">
+<div class="day-section" id="day-9">
   <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 9</div><div class="day-title">布達佩斯最終日</div><div class="day-date">4/5 (六)</div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item"><div class="event-icon">☕</div><div class="event-content"><div class="event-time">11:30</div><div class="event-name">午餐：Menza Étterem és Kávéház</div></div></div>
@@ -296,7 +300,7 @@
   </div>
 </div>
 
-<div class="day-section">
+<div class="day-section" id="day-10">
   <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 10</div><div class="day-title">返程</div><div class="day-date">4/6–4/7</div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item transport-item"><div class="event-icon">✈️</div><div class="event-content"><div class="event-time">13:00 (4/6) → 04:10 (4/7)</div><div class="event-name">布達佩斯 → 北京 <span class="flight-badge">CA720</span></div></div></div>
@@ -317,7 +321,7 @@
     <img class="spot-photo" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0b/48/61/19/peking-duck.jpg?w=400&q=80" alt="烤鴨">
     <img class="spot-photo" src="https://media-cdn.tripadvisor.com/media/photo-s/0d/0d/55/42/caption.jpg?w=400&q=80" alt="北京美食">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🦆</div><div class="spot-info"><div class="spot-name">全聚德烤鴨</div><div class="spot-location">📍 北京，前門店</div></div><div class="spot-day-badge">DAY 1</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(1)"><div class="spot-emoji">🦆</div><div class="spot-info"><div class="spot-name">全聚德烤鴨</div><div class="spot-location">📍 北京，前門店</div></div><div class="spot-day-badge">DAY 1</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">創立於 1864 年的百年老字號，以掛爐烤鴨聞名全球。前門店是最具代表性的旗艦店，鴨皮金黃酥脆，搭配薄餅、蔥絲、甜麵醬食用，是到北京必嚐的美食體驗。</div>
@@ -331,7 +335,7 @@
     <img class="spot-photo" src="https://lh4.googleusercontent.com/proxy/3u01F-DGhcwfVFUT4MIEtyq-tJtrQg7fLcPueWJcbX59STxIFwA28Hvilx9yhN9oaFALh1ErrKyzLrLwxNUgydEGNWehP-k4Zl2jTfHBoR5EWr31V7AHZW30M5vmBvUt40uOwQ?w=400&q=80" alt="天安門">
     <img class="spot-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKKFRmbWBR8o9CjBMWU_fVxJJlz_kAMmDPzQ&s?w=400&q=80" alt="北京夜景">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🚋</div><div class="spot-info"><div class="spot-name">前門大街 · 噹噹車</div><div class="spot-location">📍 北京，前門</div></div><div class="spot-day-badge">DAY 1</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(1)"><div class="spot-emoji">🚋</div><div class="spot-info"><div class="spot-name">前門大街 · 噹噹車</div><div class="spot-location">📍 北京，前門</div></div><div class="spot-day-badge">DAY 1</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">前門大街是北京著名的歷史商業街，延伸至天安門廣場南端。夜晚燈火通明，氛圍熱鬧。噹噹車是仿古有軌電車，沿線行駛可欣賞天安門廣場的夜間景致，是難得的北京夜遊方式。</div>
@@ -345,7 +349,7 @@
     <img class="spot-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqzy7baJ4BVBqeN3uCFFq5YnLmY3KV5jaK8Q&s?w=400&q=80" alt="哈修塔特">
     <img class="spot-photo" src="https://tctones.com/wp-content/uploads/2021/11/%E6%8D%B7%E5%85%8B%E5%A5%A7%E5%9C%B0%E5%88%A9_%E7%AC%AC%E4%BA%8C%E5%A4%A9-25.jpg?w=400&q=80" alt="奧地利小鎮">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🏔</div><div class="spot-info"><div class="spot-name">哈修塔特</div><div class="spot-location">📍 奧地利，薩爾茨卡默古特</div></div><div class="spot-day-badge">DAY 3</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(3)"><div class="spot-emoji">🏔</div><div class="spot-info"><div class="spot-name">哈修塔特</div><div class="spot-location">📍 奧地利，薩爾茨卡默古特</div></div><div class="spot-day-badge">DAY 3</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">被譽為「世界上最美麗的小鎮」，坐落在哈修塔特湖畔，背靠陡峭山壁。UNESCO 世界文化遺產，色彩繽紛的房屋倒映在湖面上，宛如明信片場景。世界上最古老的鹽礦也在此處。</div>
@@ -359,7 +363,7 @@
     <img class="spot-photo" src="https://a.bbkz.net/forum/attachment.php?attachmentid=1958527&thumb=1&d=1479119243?w=400&q=80" alt="登山火車">
     <img class="spot-photo" src="https://icrvb3jy.xinmedia.com/solomo/article/6/D/0/6D01327D-B8AD-322A-9187-6A5A52831E03.jpg?w=400&q=80" alt="山頂景色">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🚞</div><div class="spot-info"><div class="spot-name">沙夫堡登山火車</div><div class="spot-location">📍 聖沃夫岡，奧地利</div></div><div class="spot-day-badge">DAY 2</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(2)"><div class="spot-emoji">🚞</div><div class="spot-info"><div class="spot-name">沙夫堡登山火車</div><div class="spot-location">📍 聖沃夫岡，奧地利</div></div><div class="spot-day-badge">DAY 2</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">Schafbergbahn 是奧地利最陡峭的齒軌登山鐵路之一，從聖沃夫岡出發攀登至海拔 1783 公尺山頂。蒸汽機車緩緩爬升，沿途薩爾茨卡默古特湖群盡收眼底。《真善美》電影也曾在此取景。</div>
@@ -373,7 +377,7 @@
     <img class="spot-photo" src="https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/info/location/VIE/E0/VIE0000005/VIE0000005_78605.jpg?w=400&q=80" alt="美景宮">
     <img class="spot-photo" src="https://static.liontech.com.tw/DS/go_images/1/368/478/Q211818/Schloss_Belvedere_Sept_2020_1.webp?w=400&q=80" alt="維也納宮殿">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🌿</div><div class="spot-info"><div class="spot-name">美景宮花園</div><div class="spot-location">📍 維也納，奧地利</div></div><div class="spot-day-badge">DAY 4</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(4)"><div class="spot-emoji">🌿</div><div class="spot-info"><div class="spot-name">美景宮花園</div><div class="spot-location">📍 維也納，奧地利</div></div><div class="spot-day-badge">DAY 4</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">Belvedere 宮殿群建於 18 世紀，是巴洛克式建築傑作。上美景宮收藏克林姆名作《吻》，下美景宮設有裝飾藝術展。宮殿花園法式對稱設計精美，噴泉、雕像林立，遠處可望維也納市景。</div>
@@ -387,7 +391,7 @@
     <img class="spot-photo" src="https://img.freepik.com/premium-photo/st-peter-s-church-vienna-austria-no-people_400112-449.jpg?w=400&q=80" alt="教堂">
     <img class="spot-photo" src="https://cdn.getyourguide.com/img/tour/b99e1ff8af3067a87a3e7d046fe29a87f2d64c3888032cc89199b7dad65e0d21.jpg/75.jpg?w=400&q=80" alt="古典音樂">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🎵</div><div class="spot-info"><div class="spot-name">聖彼得教堂</div><div class="spot-location">📍 維也納，格拉本附近</div></div><div class="spot-day-badge">DAY 4</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(4)"><div class="spot-emoji">🎵</div><div class="spot-info"><div class="spot-name">聖彼得教堂</div><div class="spot-location">📍 維也納，格拉本附近</div></div><div class="spot-day-badge">DAY 4</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">Peterskirche 是維也納最美麗的巴洛克教堂之一，建於 1733 年。金色裝飾、壁畫與管風琴造就奢華室內空間。每週定期舉辦免費古典音樂會，在神聖空間中聆聽現場演奏是難忘體驗。</div>
@@ -401,7 +405,7 @@
     <img class="spot-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROSSELp8VGh4BeIeMSIj3Rfvxcg3I7Lo_VrA&s?w=400&q=80" alt="維也納大教堂">
     <img class="spot-photo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhpSyPeM0XDhoDOajgMXlEAVy-j1Oay0-GdY_yBaSfHtheRHfVSIeHCIwi1TiXWE7MCrutNHyYvC3HCWiSssZCNOee2v4EE7YupgzyVHUJcucuWkPKWUaIB13jtIJnAjE4Dremd_bjUjzt6xkaYCMbU3cRQ_5juUIi-fNd9k4lNuUbhySw0Ojy8leGGuXme/s600/IMG_8018_rev.jpg?w=400&q=80" alt="哥德式教堂">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">⛪</div><div class="spot-info"><div class="spot-name">聖斯德旺主教堂</div><div class="spot-location">📍 維也納，史蒂芬廣場</div></div><div class="spot-day-badge">DAY 4</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(4)"><div class="spot-emoji">⛪</div><div class="spot-info"><div class="spot-name">聖斯德旺主教堂</div><div class="spot-location">📍 維也納，史蒂芬廣場</div></div><div class="spot-day-badge">DAY 4</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">Stephansdom 是維也納的精神象徵，哥德式尖塔高達 136 公尺，彩色磁磚屋頂圖案鮮明。教堂已有 800 年歷史，地下有哈布斯堡王朝的地下墓穴。登上南塔可俯瞰維也納全城。</div>
@@ -415,7 +419,7 @@
     <img class="spot-photo" src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Wien_-_Graben_%283%29.JPG?w=400&q=80" alt="維也納街道">
     <img class="spot-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV0pV01SINk1ehBf8oqSNd4cpx8_D6PaPNJQ&s?w=400&q=80" alt="咖啡館">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">☕</div><div class="spot-info"><div class="spot-name">格拉本大街 · 德梅爾咖啡</div><div class="spot-location">📍 維也納內城</div></div><div class="spot-day-badge">DAY 4</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(4)"><div class="spot-emoji">☕</div><div class="spot-info"><div class="spot-name">格拉本大街 · 德梅爾咖啡</div><div class="spot-location">📍 維也納內城</div></div><div class="spot-day-badge">DAY 4</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">Graben 是維也納最精華的步行購物街，精品名店林立。德梅爾咖啡（Café Demel）創立於 1786 年，曾是哈布斯堡皇室御用糕點店，招牌沙赫蛋糕（Sachertorte）與手工糖果是必買伴手禮。</div>
@@ -429,7 +433,7 @@
     <img class="spot-photo" src="https://image.cdn-eztravel.com.tw/lPxsG3yVPJc3J9w4-Hn5KrkuB7ayvWf76u4i7a8I_mE/g:ce/aHR0cHM6Ly92YWNhdGlvbi5jZG4tZXp0cmF2ZWwuY29tLnR3L2ltZy9WRFIvQUFfMTA5MTM3NTcyNi5qcGc.jpg?w=400&q=80" alt="美泉宮">
     <img class="spot-photo" src="https://www.artisan.com.tw/images/blogs/20210728152649.jpg?w=400&q=80" alt="宮殿花園">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🏰</div><div class="spot-info"><div class="spot-name">美泉宮 · 凱旋門</div><div class="spot-location">📍 維也納，奧地利</div></div><div class="spot-day-badge">DAY 5</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(5)"><div class="spot-emoji">🏰</div><div class="spot-info"><div class="spot-name">美泉宮 · 凱旋門</div><div class="spot-location">📍 維也納，奧地利</div></div><div class="spot-day-badge">DAY 5</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">Schönbrunn 美泉宮是哈布斯堡王朝的夏宮，UNESCO 世界遺產。宮殿後方山丘上的凱旋門（Gloriette）俯瞰整座宮殿與維也納市區，視野絕佳。宮殿有 1441 個房間，金碧輝煌。</div>
@@ -443,7 +447,7 @@
     <img class="spot-photo" src="https://fashionmom.tw/wp-content/uploads/20191211160256_52.jpg?w=400&q=80" alt="科技博物館">
     <img class="spot-photo" src="https://i0.wp.com/lillian.tw/wp-content/uploads/20251021133035_0_6936a6.jpg?w=400&q=80" alt="兒童博物館">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🔬</div><div class="spot-info"><div class="spot-name">美泉宮兒童博物館 / 科技博物館</div><div class="spot-location">📍 維也納</div></div><div class="spot-day-badge">DAY 5</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(5)"><div class="spot-emoji">🔬</div><div class="spot-info"><div class="spot-name">美泉宮兒童博物館 / 科技博物館</div><div class="spot-location">📍 維也納</div></div><div class="spot-day-badge">DAY 5</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">美泉宮兒童博物館讓孩子穿上宮廷服裝體驗皇室生活，寓教於樂，適合 4–13 歲。維也納科技博物館展示科技與交通發展，有大量可動手操作的展品，適合較大孩子。</div>
@@ -457,7 +461,7 @@
     <img class="spot-photo" src="https://images.trvl-media.com/place/6070519/4132cd13-9672-4fa0-bdd5-cbf77b8ba033.jpg?w=400&q=80" alt="藥妝店">
     <img class="spot-photo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjkBKwbWrZu_l_QokTZipn3nGy-bxxYhk8HnjcLq-Ct2Br9dwJR-BqZt_fGQqn04zHgpFzTbu5xjrkPmsZtONm_uUz5FSuDhHuEGD44lW6HNYux18Chg7NzNMzcITCdiAsVqvdTWo3GT_mM/s1600/IMG_3192.jpg?w=400&q=80" alt="購物大街">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🛒</div><div class="spot-info"><div class="spot-name">瑪麗亞希爾夫大街</div><div class="spot-location">📍 維也納第六、七區</div></div><div class="spot-day-badge">DAY 5</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(5)"><div class="spot-emoji">🛒</div><div class="spot-info"><div class="spot-name">瑪麗亞希爾夫大街</div><div class="spot-location">📍 維也納第六、七區</div></div><div class="spot-day-badge">DAY 5</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">維也納最長的購物大街，全長約 1.5 公里，集結 H&M、Zara、Müller 藥妝、Spar 超市等平價商店，也有多家百貨公司。Müller 是奧地利連鎖藥妝店，藥妝保養品品項豐富，價格實惠。</div>
@@ -471,7 +475,7 @@
     <img class="spot-photo" src="https://rainieis.tw/wp-content/uploads/20171214124809_94.jpg?w=400&q=80" alt="麥當勞">
     <img class="spot-photo" src="https://monkeywalker.com/wp-content/uploads/2025/05/2-2.jpg?w=400&q=80" alt="新藝術建築">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🍔</div><div class="spot-info"><div class="spot-name">Nyugati 世界最美麥當勞</div><div class="spot-location">📍 布達佩斯，Nyugati 站旁</div></div><div class="spot-day-badge">DAY 6</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(6)"><div class="spot-emoji">🍔</div><div class="spot-info"><div class="spot-name">Nyugati 世界最美麥當勞</div><div class="spot-location">📍 布達佩斯，Nyugati 站旁</div></div><div class="spot-day-badge">DAY 6</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">被譽為「世界最美麥當勞」！建築本身是 1877 年由艾菲爾公司建造，保留了新藝術風格的玻璃屋頂與鑄鐵裝飾結構，用餐環境宛如宮殿，是全球麥當勞迷朝聖地。</div>
@@ -485,7 +489,7 @@
     <img class="spot-photo" src="https://image.cdn-eztravel.com.tw/F54S9Jo21dqdTknoklTq6HV0z0e2XhalNJrEX9CLQbQ/g:ce/aHR0cHM6Ly92YWNhdGlvbi5jZG4tZXp0cmF2ZWwuY29tLnR3L3BvaS9IRy9GaXNoZXJtYW4nc0Jhc3Rpb24vc2h1dHRlcnN0b2NrXzI3NDQyMzM2Ny5qcGc.jpg?w=400&q=80" alt="漁人堡">
     <img class="spot-photo" src="https://images.trvl-media.com/place/6062389/f7f23260-7a9c-4101-8d33-a83d094dfbce.jpg?w=400&q=80" alt="布達城堡">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🏰</div><div class="spot-info"><div class="spot-name">漁人堡 · 布達城堡</div><div class="spot-location">📍 布達佩斯，城堡山</div></div><div class="spot-day-badge">DAY 7</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(7)"><div class="spot-emoji">🏰</div><div class="spot-info"><div class="spot-name">漁人堡 · 布達城堡</div><div class="spot-location">📍 布達佩斯，城堡山</div></div><div class="spot-day-badge">DAY 7</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">漁人堡（Halászbástya）七座白色塔樓象徵七個馬扎爾部落，從城牆上俯瞰多瑙河、鏈橋與佩斯城區，景致絕美。布達城堡（Buda Castle）是哈布斯堡王宮，現為國家美術館。</div>
@@ -499,7 +503,7 @@
     <img class="spot-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFCnz65RQ_BtKW1nU2_qNv_0bopP34Oyzcbg&s?w=400&q=80" alt="塞切尼鏈橋">
     <img class="spot-photo" src="https://img.ltn.com.tw/Upload/news/600/2022/03/28/phpWf02JK.jpg?w=400&q=80" alt="多瑙河">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🌉</div><div class="spot-info"><div class="spot-name">塞切尼鏈橋 · 多瑙河岸鞋子</div><div class="spot-location">📍 布達佩斯，多瑙河畔</div></div><div class="spot-day-badge">DAY 7</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(7)"><div class="spot-emoji">🌉</div><div class="spot-info"><div class="spot-name">塞切尼鏈橋 · 多瑙河岸鞋子</div><div class="spot-location">📍 布達佩斯，多瑙河畔</div></div><div class="spot-day-badge">DAY 7</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">鏈橋（Széchenyi Chain Bridge）是布達佩斯第一座永久橋梁，建於 1849 年，夜晚燈火璀璨。河岸鞋子紀念碑是二戰猶太人遇難地，60 雙鑄鐵鞋靜靜佇立，令人動容。</div>
@@ -513,7 +517,7 @@
     <img class="spot-photo" src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Budapest%2C_St._Stephen%27s_Basilica_C16.jpg?w=400&q=80" alt="聖伊什特萬聖殿">
     <img class="spot-photo" src="https://static.liontech.com.tw/DS/go_images/1/4241/4598/Q338665/Cupola_of_the_St.webp?w=400&q=80" alt="教堂內部">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">⛪</div><div class="spot-info"><div class="spot-name">聖伊什特萬聖殿</div><div class="spot-location">📍 布達佩斯，佩斯中心</div></div><div class="spot-day-badge">DAY 7</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(7)"><div class="spot-emoji">⛪</div><div class="spot-info"><div class="spot-name">聖伊什特萬聖殿</div><div class="spot-location">📍 布達佩斯，佩斯中心</div></div><div class="spot-day-badge">DAY 7</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">布達佩斯最大的天主教教堂，穹頂高達 96 公尺。內部收藏伊什特萬一世的聖右手遺物。登頂可俯瞰整個布達佩斯，附近就是著名的 Gelarto Rosa 玫瑰冰淇淋！</div>
@@ -527,7 +531,7 @@
     <img class="spot-photo" src="https://res.klook.com/image/upload/w_750,h_469,c_fill,q_85/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/d6bqcx74gaqyqomguzlv.jpg?w=400&q=80" alt="多瑙河夜景">
     <img class="spot-photo" src="https://framerusercontent.com/images/EXGEKIFv927GTjdBkhtZvEgcl0.jpg?w=400&q=80" alt="布達佩斯夜景">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🚢</div><div class="spot-info"><div class="spot-name">多瑙河遊船</div><div class="spot-location">📍 布達佩斯，多瑙河</div></div><div class="spot-day-badge">DAY 7</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(7)"><div class="spot-emoji">🚢</div><div class="spot-info"><div class="spot-name">多瑙河遊船</div><div class="spot-location">📍 布達佩斯，多瑙河</div></div><div class="spot-day-badge">DAY 7</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">夜間多瑙河遊船是布達佩斯最浪漫的體驗，從水上欣賞兩岸燈火通明的國會大廈、漁人堡、鏈橋與布達城堡，整段多瑙河岸已列入 UNESCO 世界遺產。晚上 7 點出發，夜色正美。</div>
@@ -541,7 +545,7 @@
     <img class="spot-photo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhB-kFuweeVOTLl_t61otGmCtcDtDmGLaAwzVoKQjXVvYWrCboLQHBdEypLjr5N9rnnt3GlWexpI5u1RDd-UUZnuNqclunxe9PaH9_NcuvZd39WTq2rMF3UZJzxlUvG5axLcqDyhnUFsTws/s1600/IMG_4835.JPG?w=400&q=80" alt="小孩列車">
     <img class="spot-photo" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1b/d5/61/30/the-traffic-manager-at.jpg?w=400&q=80" alt="空中纜車">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🚂</div><div class="spot-info"><div class="spot-name">小孩列車一日遊</div><div class="spot-location">📍 布達佩斯，布達山</div></div><div class="spot-day-badge">DAY 8</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(8)"><div class="spot-emoji">🚂</div><div class="spot-info"><div class="spot-name">小孩列車一日遊</div><div class="spot-location">📍 布達佩斯，布達山</div></div><div class="spot-day-badge">DAY 8</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">Children's Railway（Gyermekvasút）由 10–14 歲兒童負責站務，穿越布達山丘森林。搭配齒軌電車與 Libegő 空中纜車，可一日體驗三種特色交通工具，是布達佩斯最獨特的親子行程。</div>
@@ -555,7 +559,7 @@
     <img class="spot-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx9X0Cqo_H0pqVTewwUsuleztU-TAjf5yynw&s?w=400&q=80" alt="國會大廈">
     <img class="spot-photo" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/27/a0/03/8b/parlament.jpg?w=400&q=80" alt="國會大廈夜景">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🏛</div><div class="spot-info"><div class="spot-name">布達佩斯國會大廈</div><div class="spot-location">📍 布達佩斯，多瑙河西岸</div></div><div class="spot-day-badge">DAY 9</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(9)"><div class="spot-emoji">🏛</div><div class="spot-info"><div class="spot-name">布達佩斯國會大廈</div><div class="spot-location">📍 布達佩斯，多瑙河西岸</div></div><div class="spot-day-badge">DAY 9</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">匈牙利國會大廈（Országház）是世界上最壯觀的國會建築之一，新哥德式風格，穹頂高 96 公尺，正面長 268 公尺，內有 691 個房間。可參加導覽欣賞聖伊什特萬王冠珠寶。</div>
@@ -569,7 +573,7 @@
     <img class="spot-photo" src="https://image.cdn-eztravel.com.tw/2I9Y5YQuoWIBhXOr5eDuTGq6qKYBSOX0opkDzGEZO9s/g:ce/aHR0cHM6Ly92YWNhdGlvbi5jZG4tZXp0cmF2ZWwuY29tLnR3L2ltZy9WRFIvSEdfMzcyMzc4NTU5LmpwZw.jpg?w=400&q=80" alt="中央市場">
     <img class="spot-photo" src="https://www.bring-you.info/imgs/2023/06/nagy-vasarcsarnok-11.jpg?w=400&q=80" alt="市場食材">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">🛒</div><div class="spot-info"><div class="spot-name">布達佩斯中央市場</div><div class="spot-location">📍 布達佩斯，自由橋旁</div></div><div class="spot-day-badge">DAY 9</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(9)"><div class="spot-emoji">🛒</div><div class="spot-info"><div class="spot-name">布達佩斯中央市場</div><div class="spot-location">📍 布達佩斯，自由橋旁</div></div><div class="spot-day-badge">DAY 9</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">Nagy Vásárcsarnok 是布達佩斯最大的室內市場，建於 1897 年。一樓有新鮮蔬果、肉類、醃製品，二樓有匈牙利紀念品、辣椒粉、鵝肝、手工藝品，是採購伴手禮最佳地點。</div>
@@ -583,7 +587,7 @@
     <img class="spot-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReUAVWQDPR9BkVPmDpFShIe6fccNDVI1woGQ&s?w=400&q=80" alt="自由橋">
     <img class="spot-photo" src="https://images.trvl-media.com/place/6062393/9f82c197-8db8-4f74-99e8-e5e84048a23b.jpg?w=400&q=80" alt="電車">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">📸</div><div class="spot-info"><div class="spot-name">自由橋</div><div class="spot-location">📍 布達佩斯，多瑙河</div></div><div class="spot-day-badge">DAY 9</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(9)"><div class="spot-emoji">📸</div><div class="spot-info"><div class="spot-name">自由橋</div><div class="spot-location">📍 布達佩斯，多瑙河</div></div><div class="spot-day-badge">DAY 9</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">Szabadság híd 自由橋以鮮明的綠色鐵架和橋頂神話鳥圖騰聞名。黃色 49 號電車定期穿越橋面，與橋身形成經典的布達佩斯畫面，是攝影愛好者的熱門取景點。</div>
@@ -597,7 +601,7 @@
     <img class="spot-photo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7rd1NZui45aqJaxRUcsMQA0EjIevtOQ7vJw42Jpz2p2f4RZPYWRycoZImKLrP7nzX6QJNJkkbgfENtyp-qagPg4rAHoWYC5WdkvpBdIBOEzh20uzGmlaAUMw65MuUo-mBSlrOZEjrsNnc/s1600/Budapest.jpg?w=400&q=80" alt="蓋勒特山">
     <img class="spot-photo" src="https://thumbs.dreamstime.com/b/%E8%87%AA%E7%94%B1%E5%A5%B3%E7%A5%9E%E5%83%8F%E6%88%96%E8%87%AA%E7%94%B1%E9%9B%95%E5%83%8F%E6%98%AF%E5%B8%83%E8%BE%BE%E4%BD%A9%E6%96%AF%E7%9B%96%E5%8B%92%E7%89%B9%E5%B1%B1%E7%9A%84%E4%B8%80%E5%BA%A7%E7%BA%AA%E5%BF%B5%E7%A2%91-%E5%8C%88%E7%89%99%E5%88%A9%E5%B8%83%E8%BE%BE%E4%BD%A9%E6%96%AF-%E2%80%94-%E5%B9%B4-%E6%9C%88-162593755.jpg?w=400&q=80" alt="蓋勒特溫泉">
   </div>
-  <div class="spot-card-header"><div class="spot-emoji">⛰</div><div class="spot-info"><div class="spot-name">蓋勒特山</div><div class="spot-location">📍 布達佩斯，多瑙河西岸</div></div><div class="spot-day-badge">DAY 9</div></div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(9)"><div class="spot-emoji">⛰</div><div class="spot-info"><div class="spot-name">蓋勒特山</div><div class="spot-location">📍 布達佩斯，多瑙河西岸</div></div><div class="spot-day-badge">DAY 9</div></div>
   <div class="spot-divider"></div>
   <div class="spot-body">
     <div class="spot-desc">Gellért-hegy 海拔 235 公尺，是俯瞰布達佩斯全景最佳地點之一。山頂有自由女神像與城堡遺跡。山腳下的蓋勒特溫泉浴場以新藝術風格建築聞名，是布達佩斯最豪華的溫泉之一。</div>
@@ -669,7 +673,7 @@
 </div>
 
 <script>
-let currentMain='itinerary-spots', currentTop='itinerary', expenses=[], notes=[], savedItineraryScroll=0;
+let currentMain='itinerary-spots', currentTop='itinerary', expenses=[], notes=[];
 
 function toggleDay(header){
   const body=header.nextElementSibling, isOpen=header.classList.contains('open');
@@ -677,18 +681,18 @@ function toggleDay(header){
   body.classList.toggle('open',!isOpen);
 }
 
+// 各 panel 各自是獨立捲動容器，直接讀寫各自的 scrollTop
+function getPanel(p){ return document.getElementById('panel-'+p); }
+
+function switchTopPanel(p){
+  currentTop=p;
+  document.querySelectorAll('.top-tab').forEach(t=>t.classList.toggle('active',t.dataset.panel===p));
+  document.getElementById('panel-itinerary').classList.toggle('active',p==='itinerary');
+  document.getElementById('panel-spots').classList.toggle('active',p==='spots');
+}
+
 document.querySelectorAll('.top-tab').forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    const p=tab.dataset.panel; currentTop=p;
-    document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('panel-itinerary').classList.toggle('active',p==='itinerary');
-    document.getElementById('panel-spots').classList.toggle('active',p==='spots');
-    if(p==='itinerary'){
-      const mc=document.querySelector('.main-content');
-      requestAnimationFrame(()=>mc.scrollTo({top:savedItineraryScroll,behavior:'instant'}));
-    }
-  });
+  tab.addEventListener('click',()=>switchTopPanel(tab.dataset.panel));
 });
 
 function switchMain(s){
@@ -703,23 +707,34 @@ function switchMain(s){
 }
 
 function goToSpot(id){
-  const mc=document.querySelector('.main-content');
-  savedItineraryScroll=mc.scrollTop;
-
+  // 切換到 spots panel（行程頁的 scrollTop 自動保留在 panel-itinerary 元素上）
   currentTop='spots';
   document.querySelectorAll('.top-tab').forEach(t=>t.classList.toggle('active',t.dataset.panel==='spots'));
-  if(currentMain!=='itinerary-spots')switchMain('itinerary-spots');
+  if(currentMain!=='itinerary-spots') switchMain('itinerary-spots');
   document.getElementById('panel-itinerary').classList.remove('active');
-  document.getElementById('panel-spots').classList.add('active');
+  const spotsPanel=document.getElementById('panel-spots');
+  spotsPanel.classList.add('active');
 
   setTimeout(()=>{
     const card=document.getElementById('spot-'+id);
     if(card){
-      card.scrollIntoView({behavior:'smooth',block:'start'});
+      // 在 panel-spots 自己的捲動容器內，用 scrollIntoView 即可正確定位
+      card.scrollIntoView({behavior:'smooth', block:'start'});
       card.classList.remove('highlight');
       void card.offsetWidth;
       card.classList.add('highlight');
     }
+  },80);
+}
+
+function goToDay(n){
+  currentTop='itinerary';
+  document.querySelectorAll('.top-tab').forEach(t=>t.classList.toggle('active',t.dataset.panel==='itinerary'));
+  document.getElementById('panel-spots').classList.remove('active');
+  document.getElementById('panel-itinerary').classList.add('active');
+  setTimeout(()=>{
+    const day=document.getElementById('day-'+n);
+    if(day) day.scrollIntoView({behavior:'smooth', block:'start'});
   },80);
 }
 
