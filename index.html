@@ -223,7 +223,7 @@
 </div>
 
 <div class="day-section" id="day-2">
-  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 2</div><div class="day-title">北京→維也納 · 哈修塔特</div><div class="day-date-block"><div class="day-date">3/29 (日)</div><div class="day-weather loading" id="wx-2" data-city="Hallstatt" data-date="2026-03-29"><span class="day-weather-icon">⏳</span><span class="day-weather-temp">...</span></div></div><div class="day-chevron">▼</div></div>
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 2</div><div class="day-title">北京→維也納 · 哈修塔特</div><div class="day-date-block"><div class="day-date">3/29 (日)</div><div class="day-weather loading" id="wx-2" data-city="Vienna,Hallstatt" data-date="2026-03-29"><span class="day-weather-icon">⏳</span><span class="day-weather-temp">...</span></div></div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item transport-item"><div class="event-icon">✈️</div><div class="event-content"><div class="event-time">02:50 → 06:50</div><div class="event-name">北京 → 維也納 <span class="flight-badge">CA841</span></div></div></div>
     <div class="event-item"><div class="event-icon">🚗</div><div class="event-content"><div class="event-name">維也納機場 → 自駕</div><div class="event-desc">前往哈修塔特及聖沃夫岡湖</div></div></div>
@@ -268,7 +268,7 @@
 </div>
 
 <div class="day-section" id="day-6">
-  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 6</div><div class="day-title">維也納→布達佩斯</div><div class="day-date-block"><div class="day-date">4/2 (四)</div><div class="day-weather loading" id="wx-6" data-city="Budapest" data-date="2026-04-02"><span class="day-weather-icon">⏳</span><span class="day-weather-temp">...</span></div></div><div class="day-chevron">▼</div></div>
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 6</div><div class="day-title">維也納→布達佩斯</div><div class="day-date-block"><div class="day-date">4/2 (四)</div><div class="day-weather loading" id="wx-6" data-city="Vienna,Budapest" data-date="2026-04-02"><span class="day-weather-icon">⏳</span><span class="day-weather-temp">...</span></div></div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item"><div class="event-icon">🏨</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">Check out</div></div></div>
     <div class="event-item transport-item"><div class="event-icon">🚄</div><div class="event-content"><div class="event-time">13:27 → 15:58</div><div class="event-name">維也納 → 布達佩斯 Kelenfold <span class="flight-badge">RJ1033</span></div></div></div>
@@ -995,20 +995,25 @@ const CITY_COORDS = {
 };
 
 async function fetchWeatherForDay(el) {
-  const city = el.dataset.city;
+  const cities = el.dataset.city.split(',');
   const date = el.dataset.date;
-  const coords = CITY_COORDS[city];
-  if (!coords) { el.classList.add('error'); return; }
+  if (!cities.length) { el.classList.add('error'); return; }
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&start_date=${date}&end_date=${date}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    const code = data.daily.weathercode[0];
-    const tmax = Math.round(data.daily.temperature_2m_max[0]);
-    const tmin = Math.round(data.daily.temperature_2m_min[0]);
+    const results = await Promise.all(cities.map(city => {
+      const coords = CITY_COORDS[city.trim()];
+      if (!coords) return null;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&start_date=${date}&end_date=${date}`;
+      return fetch(url).then(r => r.json());
+    }));
+    const valid = results.filter(Boolean);
+    if (!valid.length) { el.classList.add('error'); return; }
+    // Use first city's weather code (main destination), but min of mins and max of maxes
+    const code = valid[0].daily.weathercode[0];
+    const tmin = Math.min(...valid.map(d => d.daily.temperature_2m_min[0]));
+    const tmax = Math.max(...valid.map(d => d.daily.temperature_2m_max[0]));
     const icon = WMO_ICONS[code] || '🌡';
     el.classList.remove('loading');
-    el.innerHTML = `<span class="day-weather-icon">${icon}</span><span class="day-weather-temp">${tmin}–${tmax}°C</span>`;
+    el.innerHTML = `<span class="day-weather-icon">${icon}</span><span class="day-weather-temp">${Math.round(tmin)}–${Math.round(tmax)}°C</span>`;
   } catch(e) {
     el.classList.add('error');
   }
