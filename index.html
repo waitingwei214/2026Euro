@@ -48,9 +48,22 @@
   .day-header.open { border-radius: 12px 12px 0 0; }
   .day-badge { background: rgba(255,255,255,0.25); border-radius: 8px; padding: 2px 10px; font-size: 13px; font-weight: 700; flex-shrink: 0; }
   .day-title { font-size: 15px; font-weight: 600; flex: 1; }
-  .day-date { font-size: 12px; opacity: 0.85; flex-shrink: 0; }
+  .day-date-block { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
+  .day-date { font-size: 12px; opacity: 0.85; }
   .day-chevron { font-size: 13px; opacity: 0.8; transition: transform 0.3s; flex-shrink: 0; }
   .day-header.open .day-chevron { transform: rotate(180deg); }
+
+  /* WEATHER WIDGET */
+  .day-weather {
+    display: inline-flex; align-items: center; gap: 3px;
+    background: rgba(255,255,255,0.18); border-radius: 20px;
+    padding: 2px 7px 2px 5px;
+    font-size: 11px; font-weight: 600; color: white;
+  }
+  .day-weather-icon { font-size: 13px; line-height: 1; }
+  .day-weather-temp { letter-spacing: 0.2px; }
+  .day-weather.loading { opacity: 0.55; }
+  .day-weather.error { display: none; }
 
   .day-body {
     background: white; border-radius: 0 0 12px 12px;
@@ -200,7 +213,7 @@
 <div class="tab-panel active" id="panel-itinerary">
 
 <div class="day-section" id="day-1">
-  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 1</div><div class="day-title">出發 · 台北→北京</div><div class="day-date">3/28 (六)</div><div class="day-chevron">▼</div></div>
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 1</div><div class="day-title">出發 · 台北→北京</div><div class="day-date-block"><div class="day-date">3/28 (六)</div><div class="day-weather loading" id="wx-1" data-city="Beijing" data-date="2026-03-28"><span class="day-weather-icon">⏳</span><span class="day-weather-temp">...</span></div></div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item transport-item"><div class="event-icon">✈️</div><div class="event-content"><div class="event-time">13:15 → 16:45</div><div class="event-name">台北 → 北京 <span class="flight-badge">CA186</span></div></div></div>
     <div class="event-item clickable" onclick="goToSpot('quanjude')"><div class="event-icon">🦆</div><div class="event-content"><div class="event-name">晚餐：全聚德烤鴨</div><div class="event-desc">百年老字號，北京必吃烤鴨</div></div><div class="event-arrow">›</div></div>
@@ -210,7 +223,7 @@
 </div>
 
 <div class="day-section" id="day-2">
-  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 2</div><div class="day-title">北京→維也納 · 哈修塔特</div><div class="day-date">3/29 (日)</div><div class="day-chevron">▼</div></div>
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 2</div><div class="day-title">北京→維也納 · 哈修塔特</div><div class="day-date-block"><div class="day-date">3/29 (日)</div><div class="day-weather loading" id="wx-2" data-city="Hallstatt" data-date="2026-03-29"><span class="day-weather-icon">⏳</span><span class="day-weather-temp">...</span></div></div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item transport-item"><div class="event-icon">✈️</div><div class="event-content"><div class="event-time">02:50 → 06:50</div><div class="event-name">北京 → 維也納 <span class="flight-badge">CA841</span></div></div></div>
     <div class="event-item"><div class="event-icon">🚗</div><div class="event-content"><div class="event-name">維也納機場 → 自駕</div><div class="event-desc">前往哈修塔特及聖沃夫岡湖</div></div></div>
@@ -220,7 +233,7 @@
 </div>
 
 <div class="day-section" id="day-3">
-  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 3</div><div class="day-title">哈修塔特 → 回維也納</div><div class="day-date">3/30 (一)</div><div class="day-chevron">▼</div></div>
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 3</div><div class="day-title">哈修塔特 → 回維也納</div><div class="day-date-block"><div class="day-date">3/30 (一)</div><div class="day-weather loading" id="wx-3" data-city="Vienna" data-date="2026-03-30"><span class="day-weather-icon">⏳</span><span class="day-weather-temp">...</span></div></div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item clickable" onclick="goToSpot('hallstatt')"><div class="event-icon">🏔</div><div class="event-content"><div class="event-name">哈修塔特</div><div class="event-desc">⚠️ 14:00 前必須離開</div></div><div class="event-arrow">›</div></div>
     <div class="event-item"><div class="event-icon">🚗</div><div class="event-content"><div class="event-name">回維也納市區</div><div class="event-desc">購買維也納 24H Pass（交通用）</div></div></div>
@@ -230,7 +243,7 @@
 </div>
 
 <div class="day-section" id="day-4">
-  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 4</div><div class="day-title">維也納市區探索</div><div class="day-date">3/31 (二)</div><div class="day-chevron">▼</div></div>
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 4</div><div class="day-title">維也納市區探索</div><div class="day-date-block"><div class="day-date">3/31 (二)</div><div class="day-weather loading" id="wx-4" data-city="Vienna" data-date="2026-03-31"><span class="day-weather-icon">⏳</span><span class="day-weather-temp">...</span></div></div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item clickable" onclick="goToSpot('belvedere')"><div class="event-icon">🌿</div><div class="event-content"><div class="event-time">10:00</div><div class="event-name">美景宮花園</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('ribsofvienna')"><div class="event-icon">🥩</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">午餐：Ribs of Vienna</div></div><div class="event-arrow">›</div></div>
@@ -244,7 +257,7 @@
 </div>
 
 <div class="day-section" id="day-5">
-  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 5</div><div class="day-title">美泉宮 · 購物</div><div class="day-date">4/1 (三)</div><div class="day-chevron">▼</div></div>
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 5</div><div class="day-title">美泉宮 · 購物</div><div class="day-date-block"><div class="day-date">4/1 (三)</div><div class="day-weather loading" id="wx-5" data-city="Vienna" data-date="2026-04-01"><span class="day-weather-icon">⏳</span><span class="day-weather-temp">...</span></div></div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item clickable" onclick="goToSpot('plachutta')"><div class="event-icon">🍖</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">午餐：Plachutta Stammhaus Hietzing</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('schonbrunn')"><div class="event-icon">🏰</div><div class="event-content"><div class="event-time">13:30</div><div class="event-name">美泉宮凱旋門</div></div><div class="event-arrow">›</div></div>
@@ -255,7 +268,7 @@
 </div>
 
 <div class="day-section" id="day-6">
-  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 6</div><div class="day-title">維也納→布達佩斯</div><div class="day-date">4/2 (四)</div><div class="day-chevron">▼</div></div>
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 6</div><div class="day-title">維也納→布達佩斯</div><div class="day-date-block"><div class="day-date">4/2 (四)</div><div class="day-weather loading" id="wx-6" data-city="Budapest" data-date="2026-04-02"><span class="day-weather-icon">⏳</span><span class="day-weather-temp">...</span></div></div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item"><div class="event-icon">🏨</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">Check out</div></div></div>
     <div class="event-item transport-item"><div class="event-icon">🚄</div><div class="event-content"><div class="event-time">13:27 → 15:58</div><div class="event-name">維也納 → 布達佩斯 Kelenfold <span class="flight-badge">RJ1033</span></div></div></div>
@@ -267,7 +280,7 @@
 </div>
 
 <div class="day-section" id="day-7">
-  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 7</div><div class="day-title">布達佩斯精華</div><div class="day-date">4/3 (五)</div><div class="day-chevron">▼</div></div>
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 7</div><div class="day-title">布達佩斯精華</div><div class="day-date-block"><div class="day-date">4/3 (五)</div><div class="day-weather loading" id="wx-7" data-city="Budapest" data-date="2026-04-03"><span class="day-weather-icon">⏳</span><span class="day-weather-temp">...</span></div></div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item clickable" onclick="goToSpot('fishermans')"><div class="event-icon">🏰</div><div class="event-content"><div class="event-time">08:30</div><div class="event-name">漁人堡 → 布達城堡</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('chainbridge')"><div class="event-icon">🌉</div><div class="event-content"><div class="event-name">塞切尼鏈橋 → 多瑙河岸鞋子</div></div><div class="event-arrow">›</div></div>
@@ -281,7 +294,7 @@
 </div>
 
 <div class="day-section" id="day-8">
-  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 8</div><div class="day-title">小孩列車一日遊</div><div class="day-date">4/4 (六)</div><div class="day-chevron">▼</div></div>
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 8</div><div class="day-title">小孩列車一日遊</div><div class="day-date-block"><div class="day-date">4/4 (六)</div><div class="day-weather loading" id="wx-8" data-city="Budapest" data-date="2026-04-04"><span class="day-weather-icon">⏳</span><span class="day-weather-temp">...</span></div></div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item"><div class="event-icon">🚋</div><div class="event-content"><div class="event-name">Collect Residence → Városmajor 站</div><div class="event-desc">換齒軌電車</div></div></div>
     <div class="event-item clickable" onclick="goToSpot('childrentrain')"><div class="event-icon">🚡</div><div class="event-content"><div class="event-name">齒軌電車 → 小孩列車 → 空中纜車一日遊</div><div class="event-desc">Széchenyi hegy → Jánoshegy → Libegő → 291公車回市區</div></div><div class="event-arrow">›</div></div>
@@ -289,7 +302,7 @@
 </div>
 
 <div class="day-section" id="day-9">
-  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 9</div><div class="day-title">布達佩斯最終日</div><div class="day-date">4/5 (日)</div><div class="day-chevron">▼</div></div>
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 9</div><div class="day-title">布達佩斯最終日</div><div class="day-date-block"><div class="day-date">4/5 (日)</div><div class="day-weather loading" id="wx-9" data-city="Budapest" data-date="2026-04-05"><span class="day-weather-icon">⏳</span><span class="day-weather-temp">...</span></div></div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item clickable" onclick="goToSpot('menza')"><div class="event-icon">☕</div><div class="event-content"><div class="event-time">11:30</div><div class="event-name">午餐：Menza Étterem és Kávéház</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('parliament')"><div class="event-icon">🏛</div><div class="event-content"><div class="event-name">國會大廈</div></div><div class="event-arrow">›</div></div>
@@ -301,7 +314,7 @@
 </div>
 
 <div class="day-section" id="day-10">
-  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 10</div><div class="day-title">返程</div><div class="day-date">4/6–4/7</div><div class="day-chevron">▼</div></div>
+  <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 10</div><div class="day-title">返程</div><div class="day-date-block"><div class="day-date">4/6–4/7</div><div class="day-weather loading" id="wx-10" data-city="Budapest" data-date="2026-04-06"><span class="day-weather-icon">⏳</span><span class="day-weather-temp">...</span></div></div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item transport-item"><div class="event-icon">✈️</div><div class="event-content"><div class="event-time">13:00 (4/6) → 04:10 (4/7)</div><div class="event-name">布達佩斯 → 北京 <span class="flight-badge">CA720</span></div></div></div>
     <div class="event-item transport-item"><div class="event-icon">✈️</div><div class="event-content"><div class="event-time">08:30 → 11:40 (4/7)</div><div class="event-name">北京 → 台北 <span class="flight-badge">CA185</span></div></div></div>
@@ -962,6 +975,50 @@ function renderNotes(){
 }
 loadData();
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+
+// ===== WEATHER =====
+const WMO_ICONS = {
+  0:'☀️', 1:'🌤', 2:'⛅', 3:'☁️',
+  45:'🌫', 48:'🌫',
+  51:'🌦', 53:'🌦', 55:'🌧',
+  61:'🌧', 63:'🌧', 65:'🌧',
+  71:'🌨', 73:'🌨', 75:'❄️',
+  77:'🌨', 80:'🌦', 81:'🌧', 82:'⛈',
+  85:'🌨', 86:'❄️',
+  95:'⛈', 96:'⛈', 99:'⛈'
+};
+const CITY_COORDS = {
+  'Beijing':    { lat: 39.9, lon: 116.4 },
+  'Vienna':     { lat: 48.2, lon: 16.37 },
+  'Hallstatt':  { lat: 47.56, lon: 13.65 },
+  'Budapest':   { lat: 47.5, lon: 19.04 }
+};
+
+async function fetchWeatherForDay(el) {
+  const city = el.dataset.city;
+  const date = el.dataset.date;
+  const coords = CITY_COORDS[city];
+  if (!coords) { el.classList.add('error'); return; }
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&start_date=${date}&end_date=${date}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const code = data.daily.weathercode[0];
+    const tmax = Math.round(data.daily.temperature_2m_max[0]);
+    const tmin = Math.round(data.daily.temperature_2m_min[0]);
+    const icon = WMO_ICONS[code] || '🌡';
+    el.classList.remove('loading');
+    el.innerHTML = `<span class="day-weather-icon">${icon}</span><span class="day-weather-temp">${tmin}–${tmax}°C</span>`;
+  } catch(e) {
+    el.classList.add('error');
+  }
+}
+
+function initWeather() {
+  document.querySelectorAll('.day-weather').forEach(el => fetchWeatherForDay(el));
+}
+// Slight delay so page renders first
+setTimeout(initWeather, 300);
 </script>
 </body>
 </html>
