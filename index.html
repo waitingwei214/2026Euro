@@ -215,7 +215,7 @@
     <div class="event-item transport-item"><div class="event-icon">✈️</div><div class="event-content"><div class="event-time">02:50 → 06:50</div><div class="event-name">北京 → 維也納 <span class="flight-badge">CA841</span></div></div></div>
     <div class="event-item"><div class="event-icon">🚗</div><div class="event-content"><div class="event-name">維也納機場 → 自駕</div><div class="event-desc">前往哈修塔特及聖沃夫岡湖</div></div></div>
     <div class="event-item clickable" onclick="goToSpot('schafbergbahn')"><div class="event-icon">🚞</div><div class="event-content"><div class="event-time">14:00</div><div class="event-name">聖沃夫岡 · 沙夫堡登山火車</div></div><div class="event-arrow">›</div></div>
-    <div class="event-item"><div class="event-icon">🏨</div><div class="event-content"><div class="event-name">夜宿 Seehotel Berau Wolfgangsee</div><div class="event-desc">聖沃夫岡湖畔飯店</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('seehotel')"><div class="event-icon">🏨</div><div class="event-content"><div class="event-name">夜宿 Seehotel Berau Wolfgangsee</div><div class="event-desc">聖沃夫岡湖畔飯店</div></div><div class="event-arrow">›</div></div>
   </div>
 </div>
 
@@ -224,8 +224,8 @@
   <div class="day-body open">
     <div class="event-item clickable" onclick="goToSpot('hallstatt')"><div class="event-icon">🏔</div><div class="event-content"><div class="event-name">哈修塔特</div><div class="event-desc">⚠️ 14:00 前必須離開</div></div><div class="event-arrow">›</div></div>
     <div class="event-item"><div class="event-icon">🚗</div><div class="event-content"><div class="event-name">回維也納市區</div><div class="event-desc">購買維也納 24H Pass（交通用）</div></div></div>
-    <div class="event-item"><div class="event-icon">🏨</div><div class="event-content"><div class="event-name">Check in 諾富特酒店</div><div class="event-desc">Novotel Wien Hauptbahnhof</div></div></div>
-    <div class="event-item"><div class="event-icon">🍽</div><div class="event-content"><div class="event-name">晚餐：Bohmerwald</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('novotel')"><div class="event-icon">🏨</div><div class="event-content"><div class="event-name">Check in 諾富特酒店</div><div class="event-desc">Novotel Wien Hauptbahnhof</div></div><div class="event-arrow">›</div></div>
+    <div class="event-item clickable" onclick="goToSpot('bohmerwald')"><div class="event-icon">🍽</div><div class="event-content"><div class="event-name">晚餐：Bohmerwald</div></div><div class="event-arrow">›</div></div>
   </div>
 </div>
 
@@ -233,12 +233,12 @@
   <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 4</div><div class="day-title">維也納市區探索</div><div class="day-date">3/31 (一)</div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
     <div class="event-item clickable" onclick="goToSpot('belvedere')"><div class="event-icon">🌿</div><div class="event-content"><div class="event-time">10:00</div><div class="event-name">美景宮花園</div></div><div class="event-arrow">›</div></div>
-    <div class="event-item"><div class="event-icon">🥩</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">午餐：Ribs of Vienna</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('ribsofvienna')"><div class="event-icon">🥩</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">午餐：Ribs of Vienna</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('peterskirche')"><div class="event-icon">🎵</div><div class="event-content"><div class="event-time">13:00–13:30</div><div class="event-name">聖彼得教堂免費音樂會</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('stephansdom')"><div class="event-icon">⛪</div><div class="event-content"><div class="event-time">14:00~</div><div class="event-name">聖斯德旺主教堂</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('graben')"><div class="event-icon">☕</div><div class="event-content"><div class="event-name">格拉本大街 → 德梅爾咖啡店</div></div><div class="event-arrow">›</div></div>
     <div class="event-item"><div class="event-icon">🎨</div><div class="event-content"><div class="event-name">維也納博物館</div></div></div>
-    <div class="event-item"><div class="event-icon">🍝</div><div class="event-content"><div class="event-time">18:30</div><div class="event-name">晚餐：Fine Fine all'Italiana</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('finefine')"><div class="event-icon">🍝</div><div class="event-content"><div class="event-time">18:30</div><div class="event-name">晚餐：Fine Fine all'Italiana</div></div><div class="event-arrow">›</div></div>
     <div class="event-item"><div class="event-icon">💡</div><div class="event-content"><div class="event-name">選擇性：卡爾教堂公園 / 音樂博物館</div><div class="event-desc">視體力決定</div></div></div>
   </div>
 </div>
@@ -246,7 +246,7 @@
 <div class="day-section" id="day-5">
   <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 5</div><div class="day-title">美泉宮 · 購物</div><div class="day-date">4/1 (二)</div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
-    <div class="event-item"><div class="event-icon">🍖</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">午餐：Plachutta Stammhaus Hietzing</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('plachutta')"><div class="event-icon">🍖</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">午餐：Plachutta Stammhaus Hietzing</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('schonbrunn')"><div class="event-icon">🏰</div><div class="event-content"><div class="event-time">13:30</div><div class="event-name">美泉宮凱旋門</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('kindermuseum')"><div class="event-icon">🔬</div><div class="event-content"><div class="event-time">15:00</div><div class="event-name">維也納科技博物館 or 美泉宮兒童博物館</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('mariahilfer')"><div class="event-icon">🛒</div><div class="event-content"><div class="event-time">17:00</div><div class="event-name">瑪麗亞希爾夫大街（Müller）</div></div><div class="event-arrow">›</div></div>
@@ -260,7 +260,7 @@
     <div class="event-item"><div class="event-icon">🏨</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">Check out</div></div></div>
     <div class="event-item transport-item"><div class="event-icon">🚄</div><div class="event-content"><div class="event-time">13:27 → 15:58</div><div class="event-name">維也納 → 布達佩斯 Kelenfold <span class="flight-badge">RJ1033</span></div></div></div>
     <div class="event-item"><div class="event-icon">🎫</div><div class="event-content"><div class="event-name">購買 72H Pass</div><div class="event-desc">在布達佩斯車站購買</div></div></div>
-    <div class="event-item"><div class="event-icon">🏨</div><div class="event-content"><div class="event-time">17:00</div><div class="event-name">Check in · Collect Residence Budapest</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('collectresidence')"><div class="event-icon">🏨</div><div class="event-content"><div class="event-time">17:00</div><div class="event-name">Check in · Collect Residence Budapest</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('nyugati')"><div class="event-icon">🍔</div><div class="event-content"><div class="event-name">晚餐：Nyugati McDonald's</div><div class="event-desc">世界最美麥當勞</div></div><div class="event-arrow">›</div></div>
     <div class="event-item"><div class="event-icon">🛒</div><div class="event-content"><div class="event-name">Spar 超市採買</div></div></div>
   </div>
@@ -271,7 +271,7 @@
   <div class="day-body open">
     <div class="event-item clickable" onclick="goToSpot('fishermans')"><div class="event-icon">🏰</div><div class="event-content"><div class="event-time">08:30</div><div class="event-name">漁人堡 → 布達城堡</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('chainbridge')"><div class="event-icon">🌉</div><div class="event-content"><div class="event-name">塞切尼鏈橋 → 多瑙河岸鞋子</div></div><div class="event-arrow">›</div></div>
-    <div class="event-item"><div class="event-icon">🥘</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">午餐：Gettp Gulyas</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('gettogulyas')"><div class="event-icon">🥘</div><div class="event-content"><div class="event-time">12:00</div><div class="event-name">午餐：Gettp Gulyas</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('stephens')"><div class="event-icon">⛪</div><div class="event-content"><div class="event-name">聖伊什特萬聖殿</div></div><div class="event-arrow">›</div></div>
     <div class="event-item"><div class="event-icon">🍦</div><div class="event-content"><div class="event-name">Gelarto Rosa 冰淇淋</div><div class="event-desc">超出名的玫瑰花形冰淇淋</div></div></div>
     <div class="event-item"><div class="event-icon">🛍</div><div class="event-content"><div class="event-name">Váci 逛街 · Kids Republic 玩具店</div></div></div>
@@ -291,7 +291,7 @@
 <div class="day-section" id="day-9">
   <div class="day-header open" onclick="toggleDay(this)"><div class="day-badge">DAY 9</div><div class="day-title">布達佩斯最終日</div><div class="day-date">4/5 (六)</div><div class="day-chevron">▼</div></div>
   <div class="day-body open">
-    <div class="event-item"><div class="event-icon">☕</div><div class="event-content"><div class="event-time">11:30</div><div class="event-name">午餐：Menza Étterem és Kávéház</div></div></div>
+    <div class="event-item clickable" onclick="goToSpot('menza')"><div class="event-icon">☕</div><div class="event-content"><div class="event-time">11:30</div><div class="event-name">午餐：Menza Étterem és Kávéház</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('parliament')"><div class="event-icon">🏛</div><div class="event-content"><div class="event-name">國會大廈</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('centralmarket')"><div class="event-icon">🛒</div><div class="event-content"><div class="event-name">布達佩斯中央市場</div></div><div class="event-arrow">›</div></div>
     <div class="event-item clickable" onclick="goToSpot('libertybridge')"><div class="event-icon">📸</div><div class="event-content"><div class="event-name">自由橋拍照（黃色電車經過）</div></div><div class="event-arrow">›</div></div>
@@ -607,6 +607,136 @@
     <div class="spot-desc">Gellért-hegy 海拔 235 公尺，是俯瞰布達佩斯全景最佳地點之一。山頂有自由女神像與城堡遺跡。山腳下的蓋勒特溫泉浴場以新藝術風格建築聞名，是布達佩斯最豪華的溫泉之一。</div>
     <div class="spot-tags"><span class="spot-tag">⛰ 全景俯瞰</span><span class="spot-tag">🗽 自由女神像</span><span class="spot-tag">溫泉浴場</span></div>
     <div class="spot-tip">💡 步行上山約 20–30 分鐘，路況良好。蓋勒特溫泉值得體驗，記得攜帶泳衣。</div>
+  </div>
+</div>
+
+
+<!-- ===== 餐廳 & 飯店 SPOT CARDS ===== -->
+
+<div class="spot-card" id="spot-seehotel">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://83c38106b8.clvaw-cdnwnd.com/b7478307262759e116c2f20c2d7a6ef1/200000044-59f675aefd/Berau.JPG?ph=83c38106b8?w=400&q=80" alt="市場食材">
+    <img class="spot-photo" src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/355946098.jpg?k=b6a7ceba57e5f17a8d5de67bd083125606c6d0fad9a18c4050054d5a9bb471b7&o=?w=400&q=80" alt="市場食材">
+   
+  </div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(2)"><div class="spot-emoji">🏨</div><div class="spot-info"><div class="spot-name">Seehotel Berau Wolfgangsee</div><div class="spot-location">📍 聖沃夫岡，奧地利薩爾茨卡默古特</div></div><div class="spot-day-badge">DAY 2</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">坐落在聖沃夫岡湖（Wolfgangsee）畔的湖景飯店，四周環繞阿爾卑斯山群峰。飯店直接連接湖岸，提供私人湖灘與碼頭，客房面湖視野開闊。距離沙夫堡登山火車站步行約 5 分鐘，是探索薩爾茨卡默古特的絕佳基地。</div>
+    <div class="spot-tags"><span class="spot-tag">🏔 湖景客房</span><span class="spot-tag">私人湖灘</span><span class="spot-tag">登山鐵路旁</span></div>
+    <div class="spot-tip">💡 早晨湖面平靜如鏡，從客房或湖畔可拍到絕美倒影。飯店提供划艇租借，推薦黃昏時段划船賞景。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-novotel">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://foto.hrsstatic.com/fotos/0/2/800/458/80/000000/http%3A%2F%2Ffoto-origin.hrsstatic.com%2Ffoto%2Fdms%2F882467%2FAMADEUS%2F672dba8cf97e441aae4f44b3a688c77b.jpeg/c5d9801bf86b33fc8957fcbb163eb68e/682%2C512/6/Novotel_Wien_Hauptbahnhof-Vienna-Conference_room-27-882467.jpg?w=400&q=80" alt="市場食材">
+    <img class="spot-photo" src="https://www.ahstatic.com/photos/8565_rod3c_00_p_1024x768.jpg?w=400&q=80" alt="市場食材">
+  </div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(3)"><div class="spot-emoji">🏨</div><div class="spot-info"><div class="spot-name">Novotel Wien Hauptbahnhof</div><div class="spot-location">📍 維也納，中央火車站旁</div></div><div class="spot-day-badge">DAY 3–6</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">位於維也納中央車站（Hauptbahnhof）正旁的現代四星級飯店，交通極為便利。飯店設有健身房、室內泳池與餐廳。從這裡搭地鐵 U1 線可直達市中心史蒂芬廣場，前往布達佩斯的直達快車也從旁邊的中央車站出發。</div>
+    <div class="spot-tags"><span class="spot-tag">🚉 車站零距離</span><span class="spot-tag">🏊 室內泳池</span><span class="spot-tag">四星飯店</span></div>
+    <div class="spot-tip">💡 飯店緊鄰維也納中央車站，搭 RJ 前往布達佩斯極方便。建議提前在官網直訂以獲得最優惠早餐方案。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-bohmerwald">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/09/03/17/24/photo8jpg.jpg?w=400&q=80" alt="市場食材">
+    <img class="spot-photo" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2f/ed/5b/e0/caption.jpg?w=400&q=80" alt="市場食材">
+  </div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(3)"><div class="spot-emoji">🍽</div><div class="spot-info"><div class="spot-name">Restaurant Böhmerwald</div><div class="spot-location">📍 維也納，Wieden 第四區</div></div><div class="spot-day-badge">DAY 3</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">藏身維也納第四區的傳統奧地利餐廳，以道地的波西米亞風格料理著稱，提供烤豬腳、維也納炸肉排（Wiener Schnitzel）等招牌菜。餐廳氣氛溫馨樸實，深受當地居民喜愛，是遠離觀光客喧囂、感受維也納日常飲食文化的好去處。</div>
+    <div class="spot-tags"><span class="spot-tag">🥩 炸肉排</span><span class="spot-tag">傳統奧地利菜</span><span class="spot-tag">當地人最愛</span></div>
+    <div class="spot-tip">💡 份量十足，建議不要點太多道。水煮牛肉（Tafelspitz）和炸豬排都是必點招牌，記得搭配當地生啤酒！</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-ribsofvienna">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3VBZ68k2q5YTioxdo5SBUfXmZzJWDTfuanw&s?w=400&q=80" alt="市場食材">
+    <img class="spot-photo" src="https://media-cdn.tripadvisor.com/media/photo-s/1a/05/15/00/ribs-of-vienna.jpg?w=400&q=80" alt="市場食材">
+  </div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(4)"><div class="spot-emoji">🥩</div><div class="spot-info"><div class="spot-name">Ribs of Vienna</div><div class="spot-location">📍 維也納，Weihburggasse 22</div></div><div class="spot-day-badge">DAY 4</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">維也納最受歡迎的烤肋排餐廳之一，以美式 BBQ 風格的慢烤豬肋排聞名。招牌 Baby Back Ribs 肉質軟嫩、骨肉分離，自製醬汁香氣濃郁。餐廳位於維也納老城區，距離史蒂芬廣場步行約 5 分鐘，是午餐補充體力的絕佳選擇。</div>
+    <div class="spot-tags"><span class="spot-tag">🍖 慢烤肋排</span><span class="spot-tag">美式 BBQ</span><span class="spot-tag">老城區</span></div>
+    <div class="spot-tip">💡 午餐時段提供較優惠套餐。肋排份量大，建議 2 人共享一份再各點配菜。人氣很旺，建議提前訂位。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-finefine">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/22/1f/f9/87/fine-dining-auf-italienischer.jpg?w=400&q=80" alt="市場食材">
+    <img class="spot-photo" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/31/db/b6/b1/caption.jpg?w=400&q=80" alt="市場食材">
+  </div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(4)"><div class="spot-emoji">🍝</div><div class="spot-info"><div class="spot-name">Fine Fine all'Italiana</div><div class="spot-location">📍 維也納，內城區</div></div><div class="spot-day-badge">DAY 4</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">維也納備受好評的正宗義式餐廳，食材直接從義大利進口，堅持傳統做法。手工新鮮義大利麵、拿坡里式披薩與豐富的前菜盤是亮點。裝潢溫馨時尚，適合一日觀光後的悠閒晚餐，讓人彷彿置身義大利。</div>
+    <div class="spot-tags"><span class="spot-tag">🍕 正宗義式</span><span class="spot-tag">手工鮮麵</span><span class="spot-tag">義大利進口食材</span></div>
+    <div class="spot-tip">💡 建議事先訂位，晚餐時段座位緊俏。招牌松露義大利麵和提拉米蘇不容錯過。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-plachutta">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://www.plachutta.at/wp-content/uploads/2026/03/plachutta-hietzing-180828-bb-4868-ret-1536x1024.jpg?w=400&q=80" alt="市場食材">
+    <img class="spot-photo" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0f/b8/3d/ac/tafelspitz.jpg?w=400&q=80" alt="市場食材">
+  </div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(5)"><div class="spot-emoji">🍖</div><div class="spot-info"><div class="spot-name">Plachutta Stammhaus Hietzing</div><div class="spot-location">📍 維也納，Hietzing，美泉宮附近</div></div><div class="spot-day-badge">DAY 5</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">Plachutta 是維也納最知名的 Tafelspitz（水煮牛肉）專門餐廳，被譽為此道料理的權威。Hietzing 店鄰近美泉宮，用餐後步行即可參觀皇宮。採用嚴選奧地利牛隻，以精準火候長時間慢燉，搭配蘋果辣根醬與馬鈴薯，是一道融合歷史與精緻料理的維也納經典。</div>
+    <div class="spot-tags"><span class="spot-tag">🥩 Tafelspitz 名店</span><span class="spot-tag">維也納經典料理</span><span class="spot-tag">美泉宮旁</span></div>
+    <div class="spot-tip">💡 Tafelspitz 是哈布斯堡皇室最愛料理，Plachutta 是公認最正宗的版本。建議提前訂位，可同步安排下午美泉宮行程。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-collectresidence">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://images.trvl-media.com/lodging/103000000/102930000/102925100/102925083/bb6f1621.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill?w=400&q=80" alt="市場食材">
+    <img class="spot-photo" src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/540374864.jpg?k=75921d943aea3bda5dad00afe288e7bd7045ea47b99589cd4f187fa3a12afce5&o=?w=400&q=80" alt="市場食材">
+  </div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(6)"><div class="spot-emoji">🏨</div><div class="spot-info"><div class="spot-name">Collect Residence Budapest</div><div class="spot-location">📍 布達佩斯，第七區猶太區附近</div></div><div class="spot-day-badge">DAY 6–9</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">位於布達佩斯充滿活力的第七區，精品風格的精緻住宿。飯店鄰近猶太大教堂、瓦茨街購物區與廢墟酒吧（Ruin Bar）等熱門景點，出門即是布達佩斯最精華的觀光地帶。房型寬敞、裝潢現代典雅，提供有家的質感。</div>
+    <div class="spot-tags"><span class="spot-tag">✨ 精品風格</span><span class="spot-tag">猶太區黃金地段</span><span class="spot-tag">廢墟酒吧步行圈</span></div>
+    <div class="spot-tip">💡 飯店所在的第七區是布達佩斯夜生活核心，附近有 Szimpla Kert 廢墟酒吧。白天逛完主要景點後，晚上步行即可體驗當地文化。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-gettogulyas">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/14/e0/47/c9/photo1jpg.jpg?w=400&q=80" alt="市場食材">
+    <img class="spot-photo" src="https://welovebudapest.com/i/c9/getto-gulyas_balkanyi-laszlo_20160210.exact1980w.jpg?w=400&q=80" alt="市場食材">
+  </div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(7)"><div class="spot-emoji">🥘</div><div class="spot-info"><div class="spot-name">Gettó Gulyás</div><div class="spot-location">📍 布達佩斯，猶太區第七區</div></div><div class="spot-day-badge">DAY 7</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">藏身布達佩斯猶太區的人氣匈牙利傳統料理餐廳，以豐盛的燉牛肉湯（Gulyás）聞名。餐廳保有復古的匈牙利小館氛圍，料理忠於傳統配方，使用大量匈牙利辣椒粉與本地蔬菜慢燉，湯頭濃郁鮮美，份量十足，是感受匈牙利靈魂料理的最佳地點。</div>
+    <div class="spot-tags"><span class="spot-tag">🍲 正宗匈牙利燉肉</span><span class="spot-tag">Gulyás 名店</span><span class="spot-tag">猶太區</span></div>
+    <div class="spot-tip">💡 招牌 Gulyás 燉牛肉濃湯必點，搭配匈牙利麵疙瘩（Nokedli）更道地。價格實惠，是當地人也常去的平民美食。</div>
+  </div>
+</div>
+
+<div class="spot-card" id="spot-menza">
+  <div class="spot-photos">
+    <img class="spot-photo" src="https://etterem.hu/img/max960/p571n/1354184859-4099.jpg?w=400&q=80" alt="市場食材">
+    <img class="spot-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2bjEAZsnwhMyPIWw8NjDyxpADpX-3ThrXfw&s?w=400&q=80" alt="市場食材">
+  </div>
+  <div class="spot-card-header spot-card-header-link" onclick="goToDay(9)"><div class="spot-emoji">☕</div><div class="spot-info"><div class="spot-name">Menza Étterem és Kávéház</div><div class="spot-location">📍 布達佩斯，Liszt Ferenc 廣場</div></div><div class="spot-day-badge">DAY 9</div></div>
+  <div class="spot-divider"></div>
+  <div class="spot-body">
+    <div class="spot-desc">位於布達佩斯最美咖啡廣場「Liszt Ferenc 廣場」旁的設計餐廳，以 1970 年代社會主義風格的復古室內設計聞名。Menza 在匈牙利語有「學生餐廳」之意，整體設計充滿懷舊趣味，料理則是兼具傳統匈牙利風味與現代詮釋的精緻菜色。</div>
+    <div class="spot-tags"><span class="spot-tag">🎨 設計感餐廳</span><span class="spot-tag">復古風格</span><span class="spot-tag">Liszt Ferenc 廣場</span></div>
+    <div class="spot-tip">💡 廣場本身就很美，可以餐前在廣場散步拍照。週末午餐人多，建議提前訂位。招牌鵝肝料理與匈牙利雞肉燉飯都很值得點。</div>
   </div>
 </div>
 
